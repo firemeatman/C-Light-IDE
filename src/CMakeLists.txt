@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
         ./GUI/mainwindow.h
         ./GUI/mainwindow.ui
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
+        GUI/sideMenu/sideMenuDownWidget.h GUI/sideMenu/sideMenuDownWidget.cpp GUI/sideMenu/sideMenuDownWidget.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

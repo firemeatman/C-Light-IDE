@@ -3,7 +3,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QToolBar>
-
+#include <QLayout>
 #include "sideMenu/sideMenuWidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     SideMenuWidget* sideMenuWidget = new SideMenuWidget(this);
     QToolBar* toolBar = new QToolBar(this);
     toolBar->addWidget(sideMenuWidget);
+    //toolBar->setFixedWidth(50);
     this->addToolBar(Qt::LeftToolBarArea, toolBar);
 }
 
