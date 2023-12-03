@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QLayout>
 #include "sideMenu/sideMenuWidget.h"
+#include "startPage/startPageWidget.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,8 +15,12 @@ MainWindow::MainWindow(QWidget *parent)
     SideMenuWidget* sideMenuWidget = new SideMenuWidget(this);
     QToolBar* toolBar = new QToolBar(this);
     toolBar->addWidget(sideMenuWidget);
+    toolBar->setMovable(false);
     //toolBar->setFixedWidth(50);
     this->addToolBar(Qt::LeftToolBarArea, toolBar);
+
+    StartPageWidget* startPageWidget = new StartPageWidget(this);
+    this->setCentralWidget(startPageWidget);
 }
 
 MainWindow::~MainWindow()
