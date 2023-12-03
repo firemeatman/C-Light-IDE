@@ -14,11 +14,16 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        ./GUI/mainwindow.cpp
-        ./GUI/mainwindow.h
-        ./GUI/mainwindow.ui
+        GUI/mainwindow.cpp
+        GUI/mainwindow.h
+        GUI/mainwindow.ui
+        common/forceAccess.h common/forceAccess.cpp
+        GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
+        GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
+        GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

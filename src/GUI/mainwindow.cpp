@@ -6,7 +6,7 @@
 #include <QLayout>
 #include "sideMenu/sideMenuWidget.h"
 #include "startPage/startPageWidget.h"
-
+#include "codePage/codePageEditWidget.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -19,8 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     //toolBar->setFixedWidth(50);
     this->addToolBar(Qt::LeftToolBarArea, toolBar);
 
-    StartPageWidget* startPageWidget = new StartPageWidget(this);
-    this->setCentralWidget(startPageWidget);
+    //StartPageWidget* startPageWidget = new StartPageWidget(this);
+    CodePageEditWidget* codePageEditWidget = new CodePageEditWidget(this);
+    this->setCentralWidget(codePageEditWidget);
 }
 
 MainWindow::~MainWindow()
