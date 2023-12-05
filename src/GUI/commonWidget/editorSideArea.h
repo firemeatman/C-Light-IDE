@@ -13,14 +13,10 @@ class EditorSideArea : public QWidget
 public:
     EditorSideArea(QWidget* parent = nullptr);
 
-    int lineNumberAreaWidth() const;
-    void lineNumberAreaPaintEvent(QPaintEvent* event);
-    //int blockCount() const;
 
-    QSize sizeHint() const override
-    {
-        return QSize(lineNumberAreaWidth(), 0);
-    }
+    void lineNumberAreaPaintEvent(QPaintEvent* event);
+
+    QSize sizeHint() const override;
 
     QPlainTextEdit* boundingTextEdit;
 

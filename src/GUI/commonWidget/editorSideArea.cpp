@@ -9,20 +9,6 @@ EditorSideArea::EditorSideArea(QWidget *parent)
 
 }
 
-int EditorSideArea::lineNumberAreaWidth() const
-{
-    int digits = 1;
-    int max = qMax(1, ((ForceAccess::ForceQPlainText*)boundingTextEdit)->blockCount());
-    while (max >= 10) {
-        max /= 10;
-        ++digits;
-    }
-
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
-
-    return space;
-
-}
 
 void EditorSideArea::lineNumberAreaPaintEvent(QPaintEvent *event)
 {
@@ -65,6 +51,11 @@ void EditorSideArea::lineNumberAreaPaintEvent(QPaintEvent *event)
         ++blockNumber;
     }
 
+}
+
+QSize EditorSideArea::sizeHint() const
+{
+    return QSize(((ForceAccess::ForceQPlainText*)boundingTextEdit)->viewportMargins().left(),boundingTextEdit->viewport()->y());
 }
 
 

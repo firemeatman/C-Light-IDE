@@ -20,9 +20,14 @@ set(PROJECT_SOURCES
         common/forceAccess.h common/forceAccess.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
+        GUI/codePage/codeTreeSideWidget.h GUI/codePage/codeTreeSideWidget.cpp GUI/codePage/codeTreeSideWidget.ui
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
         GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
+        third/TreeMenu.h
+        third/TreeMenu.cpp
+        third/newBulidFile.h third/newBulidFile.cpp
+        third/newBuildfolder.h third/newBuildfolder.cpp
 
 )
 

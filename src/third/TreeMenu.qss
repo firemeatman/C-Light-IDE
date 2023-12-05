@@ -1,0 +1,65 @@
+#TreeMenuVerticl:vertical
+{
+  width: 10px;
+  border:0px solid;
+  border-radius: 2px;
+  margin: 0px,0px,0px,0px;
+  background-color: transparent;
+  background:#F5F5F5;
+}
+
+#TreeMenuVerticl:vertical:hover
+{
+  width: 10px;
+  border:0px solid;
+  margin: 0px,0px,0px,0px;
+  background:#F5F5F5;
+}
+
+#TreeMenuVerticl::handle:vertical
+{
+  width: 10px;
+  background:#E1E1E1;
+  border-radius: 2px;
+}
+
+#TreeMenuVerticl::handle:vertical:hover
+{
+  background:#969696;
+  border-radius: 2px;
+}
+
+
+/*-----------------------------------*/
+
+#TreeMenuHorizontal:horizontal{
+    height: 10px;
+    border:0px solid;
+    border-radius: 2px;
+    margin: 0px,0px,0px,0px;
+    background-color: transparent;
+    background:#F5F5F5;
+}
+
+#TreeMenuHorizontal:horizontal:hover
+{
+  height: 10px;
+  border:0px solid;
+  margin: 0px,0px,0px,0px;
+  background:#F5F5F5;
+}
+
+#TreeMenuHorizontal::handle:horizontal
+{
+  height: 10px;
+  background:#E1E1E1;
+  border-radius: 2px;
+}
+
+#TreeMenuHorizontal::handle:horizontal:hover
+{
+  background:#969696;
+  border-radius: 2px;
+}
+
+

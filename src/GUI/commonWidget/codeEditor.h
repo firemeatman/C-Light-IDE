@@ -13,6 +13,7 @@ class CodeEditor : public QPlainTextEdit
 public:
     CodeEditor(QWidget *parent= nullptr);
 
+    int lineNumberAreaWidth() const;
 
 public slots:
     void updateLineNumberArea(const QRect &rect, int dy);

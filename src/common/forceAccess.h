@@ -5,6 +5,7 @@
 
 #include <QPlainTextEdit>
 #include <QTextBlock>
+#include <QMargins>
 class ForceAccess
 {
 public:
@@ -25,6 +26,10 @@ public:
         QRectF blockBoundingRect(QTextBlock& block){
             return QPlainTextEdit::blockBoundingRect(block);
         }
+        QMargins viewportMargins() const{
+            return QAbstractScrollArea::viewportMargins();
+        }
+
         //blockBoundingRect
 
     };

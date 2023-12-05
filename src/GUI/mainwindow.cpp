@@ -4,9 +4,11 @@
 
 #include <QToolBar>
 #include <QLayout>
+#include <QDockWidget>
 #include "sideMenu/sideMenuWidget.h"
 #include "startPage/startPageWidget.h"
 #include "codePage/codePageEditWidget.h"
+#include "codePage/codeTreeSideWidget.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -21,7 +23,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     //StartPageWidget* startPageWidget = new StartPageWidget(this);
     CodePageEditWidget* codePageEditWidget = new CodePageEditWidget(this);
+    CodeTreeSideWidget* codeTreeSideWidget = new CodeTreeSideWidget(this);
     this->setCentralWidget(codePageEditWidget);
+
+    QDockWidget* dockWidget = new QDockWidget();
+    dockWidget->setWidget(codeTreeSideWidget);
+    dockWidget->setFloating(false);
+    this->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
 }
 
 MainWindow::~MainWindow()
