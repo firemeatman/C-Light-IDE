@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     CodeTreeSideWidget* codeTreeSideWidget = new CodeTreeSideWidget(this);
     this->setCentralWidget(codePageEditWidget);
 
-    QDockWidget* dockWidget = new QDockWidget();
+    QDockWidget* dockWidget = new QDockWidget(this);
     dockWidget->setWidget(codeTreeSideWidget);
     dockWidget->setFloating(false);
     this->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);

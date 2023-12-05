@@ -10,10 +10,11 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CodeTreeSideWidget)
 {
+    ui->setupUi(this);
     treeMenu = new TreeMenu(this);
-    //treeMenu->hide();
-    //ui->setupUi(this);
-    //connect(ui->pushButton, &QPushButton::clicked, this, &CodeTreeSideWidget::_on_clicked_openDirBtn);
+    ui->verticalLayout->addWidget(treeMenu);
+    treeMenu->hide();
+    connect(ui->pushButton, &QPushButton::clicked, this, &CodeTreeSideWidget::_on_clicked_openDirBtn);
 
 }
 
@@ -29,7 +30,7 @@ void CodeTreeSideWidget::switchState(CodeSideWidgetState state)
         ui->widget->show();
 
     }else if(state == CodeTreeSideWidget::OPEN_DIR){
-        if(!treeMenu){
+        if(treeMenu == nullptr){
             treeMenu = new TreeMenu(this);
         }
         ui->widget->hide();
