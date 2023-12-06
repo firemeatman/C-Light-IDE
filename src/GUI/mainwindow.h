@@ -8,6 +8,8 @@ class SideMenuWidget;
 class StartPageWidget;
 class CodePageEditWidget;
 class CodeTreeSideWidget;
+class GeneratePageWidget;
+class TerminalWidget;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -28,11 +30,14 @@ private:
     Ui::MainWindow *ui;
 
     QDockWidget* codeTreeSidedockWidget;
+    QDockWidget* terminaldockWidget;
 
     SideMenuWidget* sideMenuWidget;
     StartPageWidget* startPageWidget;
     CodePageEditWidget* codePageEditWidget;
     CodeTreeSideWidget* codeTreeSideWidget;
+    TerminalWidget* terminalWidget;
+    GeneratePageWidget* generatePageWidget;
 
 public slots:
     void _on_clicked_StartBtn();

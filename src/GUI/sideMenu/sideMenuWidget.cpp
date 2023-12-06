@@ -19,11 +19,6 @@ SideMenuWidget::SideMenuWidget(QWidget *parent) :
     ui->toolButton_2->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
     CodeBtn = ui->toolButton_2;
 
-    ui->toolButton_3->setIcon(QIcon("../resource/document_icon_512px.png"));
-    ui->toolButton_3->setText("构建文件");
-    ui->toolButton_3->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui->toolButton_3->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
-
     ui->toolButton_4->setIcon(QIcon("../resource/complier_settings_icon_512px.png"));
     ui->toolButton_4->setText("编译构建");
     ui->toolButton_4->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);

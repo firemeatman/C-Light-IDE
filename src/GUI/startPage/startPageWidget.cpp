@@ -34,8 +34,8 @@ void StartPageWidget::_on_clicked_openBtn()
     if (fileDialog->exec()) {
         fileNames = fileDialog->selectedFiles();
         QString path = fileNames.at(0);
-        global_mainWindow->_on_clicked_CodeBtn();
-        CodeTreeSideWidget* treeSideWidget = global_mainWindow->getCodeTreeSideWidget();
+        GlobalData::global_mainWindow->_on_clicked_CodeBtn();
+        CodeTreeSideWidget* treeSideWidget = GlobalData::global_mainWindow->getCodeTreeSideWidget();
         treeSideWidget->switchState(CodeTreeSideWidget::OPEN_DIR);
         treeSideWidget->getTreeMenu()->openFileTree(path);
     }
