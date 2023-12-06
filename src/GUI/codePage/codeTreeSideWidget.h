@@ -27,6 +27,8 @@ public:
     CodeSideWidgetState current_state = EMPUTY;
 
 
+    TreeMenu *getTreeMenu() const;
+
 private:
     Ui::CodeTreeSideWidget *ui;
 

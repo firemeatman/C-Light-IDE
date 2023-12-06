@@ -1,0 +1,37 @@
+#widget_1 {
+	border: 2px solid rgb(89, 89, 89);
+}
+
+#widget_3 {
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#widget_4 {
+	border: 2px solid rgb(255, 85, 0);
+	margin: 2px;
+	padding: 2px;
+}
+
+#widget_3 >  QToolButton{
+	color: rgb(0, 0, 0);
+	border: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding: 0px;
+}
+
+#widget_3 > QToolButton:hover {
+    background-color: rgb(207, 216, 255);
+}
+
+#widget_3 > QToolButton:pressed {
+    background-color: rgb(157, 162, 255);
+}
+
+#widget_3 > QToolButton:disabled {
+    color: rgb(131, 131, 131);
+}

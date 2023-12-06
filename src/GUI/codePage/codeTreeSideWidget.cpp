@@ -2,9 +2,7 @@
 #include "ui_codeTreeSideWidget.h"
 
 #include <QPushButton>
-#include <QTreeWidget>
-
-
+#include <QFileDialog>
 
 CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     QWidget(parent),
@@ -38,10 +36,30 @@ void CodeTreeSideWidget::switchState(CodeSideWidgetState state)
     }
 }
 
+TreeMenu *CodeTreeSideWidget::getTreeMenu() const
+{
+    return treeMenu;
+}
+
 void CodeTreeSideWidget::_on_clicked_openDirBtn()
 {
     if(current_state != CodeTreeSideWidget::OPEN_DIR){
-        switchState(CodeTreeSideWidget::OPEN_DIR);
+
+        //定义文件对话框类
+        QFileDialog *fileDialog = new QFileDialog(this);
+        fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
+        fileDialog->setDirectory("C:/");
+        fileDialog->setFileMode(QFileDialog::Directory);
+        fileDialog->setViewMode(QFileDialog::Detail);
+
+        //打开文件目录，跳转编码页面
+        QStringList fileNames;
+        if (fileDialog->exec()) {
+            fileNames = fileDialog->selectedFiles();
+            QString path = fileNames.at(0);
+            treeMenu->openFileTree(path);
+            switchState(CodeTreeSideWidget::OPEN_DIR);
+        }
     }
 
 }

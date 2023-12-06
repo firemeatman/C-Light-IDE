@@ -17,6 +17,9 @@ public:
 
 private:
     Ui::StartPageWidget *ui;
+
+public slots:
+    void _on_clicked_openBtn();
 };
 
 #endif // STARTPAGEWIDGET_H

@@ -62,7 +62,6 @@ TreeMenu::TreeMenu(QWidget *parent):QTreeWidget(parent){
     connect(this,SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),this,SLOT(DoubleClickpath(QTreeWidgetItem*,int)));
     connect(this,SIGNAL(collapseItemSignal(const QTreeWidgetItem*)),this,SLOT(collapseItem(const QTreeWidgetItem*)));
 
-    CreateTopItem("D:/");
 }
 
 TreeMenu::~TreeMenu()
@@ -75,12 +74,32 @@ TreeMenu::~TreeMenu()
     }
 }
 
+void TreeMenu::openFileTree(QString path)
+{
+    QDir rootdir(path);
+    if(root != nullptr){
+        this->takeTopLevelItem(0);
+        delete root;
+        root = nullptr;
+    }
+    root = new QTreeWidgetItem();
+    this->addTopLevelItem(root);
+    root->setText(0,rootdir.dirName());
+    root->setIcon(0,QIcon("../resource/folder.png"));
+    root->setToolTip(0, path);
+    FindFile(&rootdir,root);
+    QApplication::processEvents(); //防止界面假死
+    root->setExpanded(true);
+}
+
 // 创建文件树的根
 void TreeMenu::CreateTopItem(QString path){
     QDir rootdir(path);
     root = new QTreeWidgetItem();
     this->addTopLevelItem(root);
     root->setText(0,rootdir.dirName());
+    root->setIcon(0,QIcon("../resource/folder.png"));
+    root->setToolTip(0, path);
     FindFile(&rootdir,root);
     QApplication::processEvents(); //防止界面假死
     root->setExpanded(true);
@@ -90,7 +109,16 @@ void TreeMenu::FindFile(QDir *path,QTreeWidgetItem *parent){
     QApplication::processEvents(); //防止界面假死
     QStringList AllDirName = path->entryList();  //返回所有文件名
     QString PathContent = path->absolutePath();
-    for(int i=0;i<AllDirName.size();i++)
+    int startIndex = 0;
+    for(startIndex = 0; startIndex<AllDirName.size(); startIndex++){
+        if(startIndex>=2){
+            break;
+        }
+        if(AllDirName[startIndex] != "." && AllDirName[startIndex] != ".."){
+            break;
+        }
+    }
+    for(int i = startIndex;i < AllDirName.size(); i++)
     {
         QFileInfo FileInfo(PathContent+"/"+AllDirName[i]);
         if(FileInfo.isFile())
@@ -102,7 +130,6 @@ void TreeMenu::FindFile(QDir *path,QTreeWidgetItem *parent){
         }
         else if(FileInfo.isDir())
         {
-            QDir NextDir(PathContent+"/"+AllDirName[i]); //返回包含文件名的绝对路径。
             QTreeWidgetItem *child = new QTreeWidgetItem(parent);  //创建对象并添加所属关系。
             child->setIcon(0,QIcon("../resource/folder.png")); //设置Item的图标，也可以通过QSS设置。
             child->setText(0,AllDirName[i]);  //设置Item的名字及所扫描到的文件名。
@@ -119,12 +146,15 @@ void TreeMenu::DoubleClickpath(QTreeWidgetItem *item, int /*column*/){
     if(FileInfo->isFile())
     {
         // 发送打开文件信号
-        emit showTextSignal(absolute_Path,FileInfo->baseName(),item);
+        emit openFileSignal(absolute_Path,FileInfo->baseName(),item);
     }
     else{
         // 打开文件夹
-        QDir dir(absolute_Path);
-        FindFile(&dir,item);
+
+        if(item->childCount() == 0){
+            QDir dir(absolute_Path);
+            FindFile(&dir,item);
+        }
     }
 }
 // 鼠标右键单击文件或文件夹时所执行的操作
@@ -146,7 +176,6 @@ void TreeMenu::itemPressedSlot(QTreeWidgetItem * pressedItem, int column){
 }
 // 右击菜单栏执行操作的具体方法
 void TreeMenu::tempActionInformation(QAction *act){
-    qDebug() << "Item " <<act->text();
     if(act->text()=="关闭项目"){
         QTreeWidgetItem *item = this->currentItem();
         QTreeWidgetItem* parItem=item->parent();
@@ -190,7 +219,7 @@ void TreeMenu::tempActionInformation(QAction *act){
         newDirWidget->exec();
     }
 }
-// 文件夹折叠的实现主要为顶部按钮提供方法，顶部按钮的实现下次再讲
+// 文件夹折叠的实现主要为顶部按钮提供方法
 void TreeMenu::buttonCollapseItem(){
     QTreeWidgetItem *t = this->currentItem();
     if(t==0)

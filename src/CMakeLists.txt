@@ -12,12 +12,71 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+set(THIRD_RESOURCES_FILE
+    third/QCodeEditor/resources/qcodeeditor_resources.qrc
+)
+
+set(THIRD_INCLUDE_FILES
+    third/QCodeEditor/include/QHighlightRule
+    third/QCodeEditor/include/QHighlightBlockRule
+    third/QCodeEditor/include/QCodeEditor
+    third/QCodeEditor/include/QCXXHighlighter
+    third/QCodeEditor/include/QLineNumberArea
+    third/QCodeEditor/include/QStyleSyntaxHighlighter
+    third/QCodeEditor/include/QSyntaxStyle
+    third/QCodeEditor/include/QGLSLCompleter
+    third/QCodeEditor/include/QGLSLHighlighter
+    third/QCodeEditor/include/QLanguage
+    third/QCodeEditor/include/QXMLHighlighter
+    third/QCodeEditor/include/QJSONHighlighter
+    third/QCodeEditor/include/QLuaCompleter
+    third/QCodeEditor/include/QLuaHighlighter
+    third/QCodeEditor/include/QPythonHighlighter
+    third/QCodeEditor/include/QFramedTextAttribute
+    third/QCodeEditor/include/internal/QHighlightRule.hpp
+    third/QCodeEditor/include/internal/QHighlightBlockRule.hpp
+    third/QCodeEditor/include/internal/QCodeEditor.hpp
+    third/QCodeEditor/include/internal/QCXXHighlighter.hpp
+    third/QCodeEditor/include/internal/QLineNumberArea.hpp
+    third/QCodeEditor/include/internal/QStyleSyntaxHighlighter.hpp
+    third/QCodeEditor/include/internal/QSyntaxStyle.hpp
+    third/QCodeEditor/include/internal/QGLSLCompleter.hpp
+    third/QCodeEditor/include/internal/QGLSLHighlighter.hpp
+    third/QCodeEditor/include/internal/QLanguage.hpp
+    third/QCodeEditor/include/internal/QXMLHighlighter.hpp
+    third/QCodeEditor/include/internal/QJSONHighlighter.hpp
+    third/QCodeEditor/include/internal/QLuaCompleter.hpp
+    third/QCodeEditor/include/internal/QLuaHighlighter.hpp
+    third/QCodeEditor/include/internal/QPythonCompleter.hpp
+    third/QCodeEditor/include/internal/QPythonHighlighter.hpp
+    third/QCodeEditor/include/internal/QFramedTextAttribute.hpp
+)
+
+set(THIRD_SOURCE_FILES
+    third/QCodeEditor/src/internal/QCodeEditor.cpp
+    third/QCodeEditor/src/internal/QLineNumberArea.cpp
+    third/QCodeEditor/src/internal/QCXXHighlighter.cpp
+    third/QCodeEditor/src/internal/QSyntaxStyle.cpp
+    third/QCodeEditor/src/internal/QStyleSyntaxHighlighter.cpp
+    third/QCodeEditor/src/internal/QGLSLCompleter.cpp
+    third/QCodeEditor/src/internal/QGLSLHighlighter.cpp
+    third/QCodeEditor/src/internal/QLanguage.cpp
+    third/QCodeEditor/src/internal/QXMLHighlighter.cpp
+    third/QCodeEditor/src/internal/QJSONHighlighter.cpp
+    third/QCodeEditor/src/internal/QLuaCompleter.cpp
+    third/QCodeEditor/src/internal/QLuaHighlighter.cpp
+    third/QCodeEditor/src/internal/QPythonCompleter.cpp
+    third/QCodeEditor/src/internal/QPythonHighlighter.cpp
+    third/QCodeEditor/src/internal/QFramedTextAttribute.cpp
+)
+
 set(PROJECT_SOURCES
         main.cpp
         GUI/mainwindow.cpp
         GUI/mainwindow.h
         GUI/mainwindow.ui
         common/forceAccess.h common/forceAccess.cpp
+        common/global_data.h common/global_data.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
         GUI/codePage/codeTreeSideWidget.h GUI/codePage/codeTreeSideWidget.cpp GUI/codePage/codeTreeSideWidget.ui
@@ -28,6 +87,9 @@ set(PROJECT_SOURCES
         third/TreeMenu.cpp
         third/newBulidFile.h third/newBulidFile.cpp
         third/newBuildfolder.h third/newBuildfolder.cpp
+        ${THIRD_RESOURCES_FILE}
+        ${THIRD_INCLUDE_FILES}
+        ${THIRD_SOURCE_FILES}
 
 )
 

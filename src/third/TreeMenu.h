@@ -14,19 +14,20 @@ class TreeMenu : public QTreeWidget{
 public:
     TreeMenu(QWidget *parent = 0);
     ~TreeMenu();
+    void openFileTree(QString path);
     void CreateTopItem(QString path);
     void FindFile(QDir *path,QTreeWidgetItem *parent);
     void buttonCollapseItem();
 private:
-    QTreeWidgetItem *root; //树的根
-    QMenu *dirMenu;  //文件夹菜单栏
-    QMenu *fileMenu;  //文件菜单栏
-    QTreeWidgetItem *nowItem; //当前光标所在Item
+    QTreeWidgetItem *root = nullptr; //树的根
+    QMenu *dirMenu = nullptr;  //文件夹菜单栏
+    QMenu *fileMenu = nullptr;  //文件菜单栏
+    QTreeWidgetItem *nowItem = nullptr; //当前光标所在Item
     int nowCol; //当前所在列
-    NewBulidFile *newFileWidget;
-    NewBuildfolder *newDirWidget;
+    NewBulidFile *newFileWidget = nullptr;
+    NewBuildfolder *newDirWidget = nullptr;
 signals:
-    void showTextSignal(QString path,QString name,QTreeWidgetItem *item);
+    void openFileSignal(QString path,QString name,QTreeWidgetItem *item);
     void collapseItemSignal(const QTreeWidgetItem *item);
     void renameSignal();
 private slots:

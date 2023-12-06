@@ -1,0 +1,21 @@
+#widget_2{
+	border:2px solid rgb(89, 89, 89);
+	margin: 0px;
+}
+
+#widget_2 > QToolButton{
+    border: 0px solid #555;
+	margin-left: 2px;
+	margin-right: 2px;
+    padding: 0px;
+    color: rgb(0, 0, 0);
+}
+
+#widget_2 > QToolButton:hover {
+    background-color: rgb(194, 194, 255);
+}
+
+#widget_2 > QToolButton:pressed {
+    background-color: rgb(151, 144, 255);
+    border-color: rgb(255, 255, 255);
+}

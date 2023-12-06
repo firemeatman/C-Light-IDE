@@ -2,7 +2,7 @@
 #define SIDEMENUWIDGET_H
 
 #include <QWidget>
-
+#include <QToolButton>
 namespace Ui {
 class SideMenuWidget;
 }
@@ -15,8 +15,15 @@ public:
     explicit SideMenuWidget(QWidget *parent = nullptr);
     ~SideMenuWidget();
 
+    QToolButton* StartBtn;
+    QToolButton* CodeBtn;
+    QToolButton* GenerateBtn;
+    QToolButton* RunBtn;
+
 private:
     Ui::SideMenuWidget *ui;
+
+
 };
 
 #endif // SIDEMENUWIDGET_H
