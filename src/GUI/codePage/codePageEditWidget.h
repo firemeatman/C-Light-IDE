@@ -2,6 +2,10 @@
 #define CODEPAGEEDITWIDGET_H
 
 #include <QWidget>
+#include <QTreeWidget>
+#include <QByteArray>
+
+class QCodeEditor;
 
 namespace Ui {
 class CodePageEditWidget;
@@ -15,8 +19,13 @@ public:
     explicit CodePageEditWidget(QWidget *parent = nullptr);
     ~CodePageEditWidget();
 
+    QCodeEditor* codeEditor;
+
 private:
     Ui::CodePageEditWidget *ui;
+
+public slots:
+    void setTextData(QByteArray& data);
 };
 
 #endif // CODEPAGEEDITWIDGET_H

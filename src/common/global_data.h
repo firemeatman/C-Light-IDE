@@ -7,6 +7,7 @@
 #include "../GUI/mainwindow.h"
 #include "../GUI/commonWidget/terminalWidget.h"
 #include "../terminalSys/terminalSysteam.h"
+#include "../codeFileSys/codeFileSys.h"
 //class MainWindow;
 //class TerminalWidget;
 //class TerminalSysteam;
@@ -19,7 +20,7 @@ public:
     static MainWindow* global_mainWindow;
     static TerminalWidget* global_terminalWidget;
     static TerminalSysteam* global_terminalSysteam;
-
+    static CodeFileSys* codeFileSys;
     static QString ComplierPath;
     static QString DebugerPath;
     static QString MakeFilePath;

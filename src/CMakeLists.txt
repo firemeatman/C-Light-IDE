@@ -81,12 +81,14 @@ set(PROJECT_SOURCES
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
         GUI/codePage/codeTreeSideWidget.h GUI/codePage/codeTreeSideWidget.cpp GUI/codePage/codeTreeSideWidget.ui
+        GUI/codePage/codeFileListWidget.h GUI/codePage/codeFileListWidget.cpp GUI/codePage/codeFileListWidget.ui
+        GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
-        GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
         GUI/generatePage/generatePageWidget.h GUI/generatePage/generatePageWidget.cpp GUI/generatePage/generatePageWidget.ui
         terminalSys/terminalSysteam.h terminalSys/terminalSysteam.cpp
         terminalSys/terminalThread.h terminalSys/terminalThread.cpp
+        codeFileSys/codeFileSys.h codeFileSys/codeFileSys.cpp
         third/TreeMenu.h
         third/TreeMenu.cpp
         third/newBulidFile.h third/newBulidFile.cpp

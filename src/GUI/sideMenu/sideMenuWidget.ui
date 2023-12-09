@@ -21,38 +21,31 @@
   </property>
   <property name="styleSheet">
    <string notr="true">#SideMenuWidget{
-
-	border: 2px;
-}</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
-   <item>
-    <widget class="QWidget" name="widget_1" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">#widget_1 {
-	border: 2px solid rgb(89, 89, 89);
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 
-#widget_3 {
+#SideMenuWidget &gt; #widget_1 {
+	border: 2px solid rgb(89, 89, 89);
+	
+}
+
+#SideMenuWidget &gt; #widget_1 &gt; #widget_3 {
 	border: 0px;
 	margin: 0px;
 	padding: 0px;
 }
 
-#widget_4 {
+#SideMenuWidget &gt; #widget_1 &gt; #widget_4 {
 	border: 2px solid rgb(255, 85, 0);
 	margin: 2px;
 	padding: 2px;
 }
 
-#widget_3 &gt;  QToolButton{
+#SideMenuWidget QToolButton{
 	color: rgb(0, 0, 0);
+	background-color: #cdd1d3; /* 银鱼白 */
 	border: 0px;
 	margin-top: 0px;
 	margin-bottom: 0px;
@@ -61,18 +54,46 @@
 	padding: 0px;
 }
 
-#widget_3 &gt; QToolButton:hover {
-    background-color: rgb(207, 216, 255);
+#SideMenuWidget QToolButton:hover {
+    background-color: #74787a; /* 嫩灰  */
 }
 
-#widget_3 &gt; QToolButton:pressed {
-    background-color: rgb(157, 162, 255);
+#SideMenuWidget QToolButton:pressed {
+    background-color: #5e7987;	/* 淡蓝灰  */
 }
 
-#widget_3 &gt; QToolButton:disabled {
-    color: rgb(131, 131, 131);
+#SideMenuWidget QToolButton:checked {
+    background-color: #cdd1d3; /* 银鱼白 */
+    border-left: 5px solid #132c33; /* 深灰蓝 */
 }
+
+#SideMenuWidget &gt; #widget_2{
+	border:2px solid rgb(89, 89, 89);
+	margin: 0px;
+}
+
 </string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QWidget" name="widget_1" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="leftMargin">
@@ -106,13 +127,13 @@
           <number>0</number>
          </property>
          <property name="topMargin">
-          <number>10</number>
+          <number>2</number>
          </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
          <property name="bottomMargin">
-          <number>10</number>
+          <number>0</number>
          </property>
          <item>
           <widget class="QToolButton" name="toolButton">
@@ -136,8 +157,11 @@
          </item>
          <item>
           <widget class="QToolButton" name="toolButton_2">
-           <property name="text">
-            <string>开始</string>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
            </property>
            <property name="icon">
             <iconset>
@@ -195,29 +219,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="styleSheet">
-      <string notr="true">#widget_2{
-	border:2px solid rgb(89, 89, 89);
-	margin: 0px;
-}
-
-#widget_2 &gt; QToolButton{
-    border: 0px solid #555;
-	margin-left: 2px;
-	margin-right: 2px;
-    padding: 0px;
-    color: rgb(0, 0, 0);
-}
-
-#widget_2 &gt; QToolButton:hover {
-    background-color: rgb(194, 194, 255);
-}
-
-#widget_2 &gt; QToolButton:pressed {
-    background-color: rgb(151, 144, 255);
-    border-color: rgb(255, 255, 255);
-}</string>
-     </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="spacing">
        <number>0</number>
@@ -226,13 +227,13 @@
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>2</number>
       </property>
       <item>
        <widget class="QToolButton" name="toolButton_6">

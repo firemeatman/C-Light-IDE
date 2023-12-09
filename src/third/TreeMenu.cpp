@@ -35,10 +35,13 @@ TreeMenu::TreeMenu(QWidget *parent):QTreeWidget(parent){
     qssFile.close();
 
     newFileWidget = new NewBulidFile(this);
+    newFileWidget->setWindowFlags(newFileWidget->windowFlags()| Qt::Dialog);
+
     connect(newFileWidget->okButton,SIGNAL(clicked(bool)),this,SLOT(bulidNewFileSlot(bool)));
     connect(newFileWidget->cancalButton,SIGNAL(clicked(bool)),this,SLOT(closeBuildFileSlot(bool)));
 
     newDirWidget = new NewBuildfolder(this);
+    newDirWidget->setWindowFlags(newDirWidget->windowFlags()| Qt::Dialog);
     connect(newDirWidget->okButton,SIGNAL(clicked(bool)),this,SLOT(buildNewDirSlot(bool)));
     connect(newDirWidget->cancalButton,SIGNAL(clicked(bool)),this,SLOT(cancelDirSlot(bool)));
     // 创建右击文件夹的菜单栏
@@ -236,6 +239,26 @@ void TreeMenu::buttonCollapseItem(){
     else{
         emit collapseItemSignal(t);
     }
+}
+
+NewBulidFile *TreeMenu::getNewFileWidget() const
+{
+    return newFileWidget;
+}
+
+void TreeMenu::setNewFileWidget(NewBulidFile *newNewFileWidget)
+{
+    newFileWidget = newNewFileWidget;
+}
+
+NewBuildfolder *TreeMenu::getNewDirWidget() const
+{
+    return newDirWidget;
+}
+
+void TreeMenu::setNewDirWidget(NewBuildfolder *newNewDirWidget)
+{
+    newDirWidget = newNewDirWidget;
 }
 // 创建文件的具体实现
 void TreeMenu::bulidNewFileSlot(bool /*flag*/){

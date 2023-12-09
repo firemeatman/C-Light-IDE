@@ -23,6 +23,7 @@ CodePageEditWidget::CodePageEditWidget(QWidget *parent) :
     m_codeEditor->resize(500,500);
     QGridLayout* qGridLayout = new QGridLayout(this);
     qGridLayout->addWidget(m_codeEditor);
+    codeEditor = m_codeEditor;
 
 }
 
@@ -30,3 +31,11 @@ CodePageEditWidget::~CodePageEditWidget()
 {
     delete ui;
 }
+
+void CodePageEditWidget::setTextData(QByteArray &data)
+{
+    QString utf8_str = QString::fromLocal8Bit(data);
+    codeEditor->setPlainText(utf8_str);
+}
+
+

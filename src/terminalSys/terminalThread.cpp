@@ -2,7 +2,7 @@
 #include "terminalThread.h"
 #include <QProcess>
 
-#include "../common/global_data.h""
+#include "../common/global_data.h"
 
 TerminalThread::TerminalThread()
 {

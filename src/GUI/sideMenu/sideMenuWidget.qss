@@ -1,0 +1,52 @@
+#SideMenuWidget{
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#SideMenuWidget > #widget_1 {
+	border: 2px solid rgb(89, 89, 89);
+	
+}
+
+#SideMenuWidget > #widget_1 > #widget_3 {
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+}
+
+#SideMenuWidget > #widget_1 > #widget_4 {
+	border: 2px solid rgb(255, 85, 0);
+	margin: 2px;
+	padding: 2px;
+}
+
+#SideMenuWidget QToolButton{
+	color: rgb(0, 0, 0);
+	background-color: #cdd1d3; /* 银鱼白 */
+	border: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 2px;
+	margin-right: 2px;
+	padding: 0px;
+}
+
+#SideMenuWidget QToolButton:hover {
+    background-color: #74787a; /* 嫩灰  */
+}
+
+#SideMenuWidget QToolButton:pressed {
+    background-color: #5e7987;	/* 淡蓝灰  */
+}
+
+#SideMenuWidget QToolButton:checked {
+    background-color: #cdd1d3; /* 银鱼白 */
+    border-left: 5px solid #132c33; /* 深灰蓝 */
+}
+
+#SideMenuWidget > #widget_2{
+	border:2px solid rgb(89, 89, 89);
+	margin: 0px;
+}
+

@@ -18,6 +18,11 @@ public:
     void CreateTopItem(QString path);
     void FindFile(QDir *path,QTreeWidgetItem *parent);
     void buttonCollapseItem();
+    NewBulidFile *getNewFileWidget() const;
+    void setNewFileWidget(NewBulidFile *newNewFileWidget);
+    NewBuildfolder *getNewDirWidget() const;
+    void setNewDirWidget(NewBuildfolder *newNewDirWidget);
+
 private:
     QTreeWidgetItem *root = nullptr; //树的根
     QMenu *dirMenu = nullptr;  //文件夹菜单栏

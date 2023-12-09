@@ -10,7 +10,7 @@ class CodePageEditWidget;
 class CodeTreeSideWidget;
 class GeneratePageWidget;
 class TerminalWidget;
-
+class CodeFileListWidget;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -26,17 +26,23 @@ public:
 
     CodeTreeSideWidget *getCodeTreeSideWidget() const;
 
+    CodeFileListWidget *getCodeFileListWidget() const;
+    void setCodeFileListWidget(CodeFileListWidget *newCodeFileListWidget);
+
 private:
     Ui::MainWindow *ui;
 
     QDockWidget* codeTreeSidedockWidget;
     QDockWidget* terminaldockWidget;
+    QDockWidget* codeFileListdockWidget;
 
     SideMenuWidget* sideMenuWidget;
     StartPageWidget* startPageWidget;
     CodePageEditWidget* codePageEditWidget;
     CodeTreeSideWidget* codeTreeSideWidget;
+    CodeFileListWidget* codeFileListWidget;
     TerminalWidget* terminalWidget;
+
     GeneratePageWidget* generatePageWidget;
 
 public slots:
