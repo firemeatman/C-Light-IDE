@@ -1,11 +1,19 @@
 #include "sideMenuWidget.h"
 #include "ui_sideMenuWidget.h"
 #include <QStyle>
+#include <QFile>
 SideMenuWidget::SideMenuWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::SideMenuWidget)
 {
     ui->setupUi(this);
+
+    QFile qssFile("sideMenuWidget.qss");
+    if(qssFile.open(QFile::ReadOnly)){
+        this->setStyleSheet(qssFile.readAll());
+    }
+    qssFile.close();
+
 
     ui->toolButton->setIcon(QIcon("../resource/play_regular_icon_512px.png"));
     ui->toolButton->setText("开始");

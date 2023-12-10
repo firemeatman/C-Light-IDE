@@ -21,8 +21,11 @@ int main(int argc, char *argv[])
         delete GlobalData::global_terminalSysteam;
         GlobalData::global_terminalSysteam = nullptr;
     }
-    delete GlobalData::codeFileSys;
-    GlobalData::codeFileSys = nullptr;
+    if(GlobalData::codeFileSys != nullptr){
+        delete GlobalData::codeFileSys;
+        GlobalData::codeFileSys = nullptr;
+    }
+
 
     return flag;
 }

@@ -4,7 +4,7 @@
 
 
 #include <QObject>
-#include <QMap>
+#include <QList>
 #include <QListWidget>
 
 class CodeFileSys : public QObject
@@ -14,29 +14,20 @@ public:
     explicit CodeFileSys(QObject *parent = nullptr);
     ~CodeFileSys();
 
-    class FileInfo{
+    class CodeFileInfo{
     public:
-        QString name;
+        QString path;
+        QString realName;
+        QString itemName;
         QListWidgetItem* item;
         QByteArray data;
     };
 
-    bool addFileCache(QString& filePath, QByteArray& data);
-    bool addFileInfo(QString& filePath, CodeFileSys::FileInfo* fileInfo);
-    bool containFile(QString& filePath);
-    CodeFileSys::FileInfo* findFile(QString& filePath);
-    CodeFileSys::FileInfo* findFile(QListWidgetItem* item);
-    QString getfilePath(QListWidgetItem* item);
-    QString getfilePath(CodeFileSys::FileInfo* fileInfo);
-    void removeFileCache(QString& filePath);
-    bool updateFileCache(QString& filePath, QByteArray& data);
+    QList<CodeFileSys::CodeFileInfo*> opendCodeFileList;
 
-
-    QMap<QString, CodeFileSys::FileInfo*> getOpenedFileMap() const;
-    void setOpenedFileMap(const QMap<QString, CodeFileSys::FileInfo*> &newOpenedFileMap);
 
 private:
-    QMap<QString, CodeFileSys::FileInfo*> openedFileMap;
+
 
 
 
