@@ -33,9 +33,9 @@ CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
     fileItemMenu->addAction("关闭其他");
     fileItemMenu->addAction("关闭所有");
 
-    connect(listWidget, &QListWidget::itemDoubleClicked, this, &CodeFileListWidget::_on_doubleClickedItem);
     connect(listWidget, &QListWidget::itemPressed, this, &CodeFileListWidget::_on_clickedItem);
     connect(fileItemMenu, &QMenu::triggered, this, &CodeFileListWidget::_on_triggeredMenu);
+    connect(listWidget, &QListWidget::currentItemChanged, this, &CodeFileListWidget::_on_currentItemChanged);
 
 }
 
@@ -91,29 +91,35 @@ void CodeFileListWidget::_on_openFile(QString path, QString name, QTreeWidgetIte
         emit showFileData(fileInfo->data);
     }else{
         listWidget->setCurrentItem(targetCodeFile->item);
-        _on_doubleClickedItem(targetCodeFile->item);
+        emit showFileData(targetCodeFile->data);
     }
 
 }
 
-// 双击，发送显示文件数据的信号
-void CodeFileListWidget::_on_doubleClickedItem(QListWidgetItem *item)
+// 单击，右键打开菜单；左键显示文件数据
+void CodeFileListWidget::_on_clickedItem(QListWidgetItem *item)
 {
-
     if(qApp->mouseButtons() == Qt::LeftButton){
         for(CodeFileSys::CodeFileInfo* v : GlobalData::codeFileSys->opendCodeFileList){
             if(v->item == item){
                 emit showFileData(v->data);
             }
+            break;
         }
-    }
-
-}
-// 单击，打开菜单
-void CodeFileListWidget::_on_clickedItem(QListWidgetItem *item)
-{
-    if(qApp->mouseButtons() == Qt::RightButton){
+    }else if(qApp->mouseButtons() == Qt::RightButton){
         fileItemMenu->exec(QCursor::pos());
+    }
+}
+
+void CodeFileListWidget::_on_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    if(previous != nullptr){
+        for(CodeFileSys::CodeFileInfo* v : GlobalData::codeFileSys->opendCodeFileList){
+            if(v->item == previous){
+                emit switchFile(v);
+                break;
+            }
+        }
     }
 }
 
@@ -157,7 +163,6 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
             }
         }
     }else if(text.compare("关闭其他") == 0){
-
         for(int i=0 ;i < size; i++){
             if((GlobalData::codeFileSys->opendCodeFileList[i])->item != item){
 
@@ -171,10 +176,12 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
 
                 size = GlobalData::codeFileSys->opendCodeFileList.size();
                 i--;
+            }else{
+                fileInfo = GlobalData::codeFileSys->opendCodeFileList[i];
             }
         }
         listWidget->setCurrentItem(item);
-        _on_doubleClickedItem(item);
+        if(fileInfo != nullptr) emit showFileData(fileInfo->data);
 
     }else if(text.compare("关闭所有") == 0){
         qDeleteAll(GlobalData::codeFileSys->opendCodeFileList);

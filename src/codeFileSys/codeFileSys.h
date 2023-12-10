@@ -20,11 +20,17 @@ public:
         QString realName;
         QString itemName;
         QListWidgetItem* item;
+        bool isNeedSave = false;
         QByteArray data;
     };
 
     QList<CodeFileSys::CodeFileInfo*> opendCodeFileList;
 
+    bool saveFileData(CodeFileSys::CodeFileInfo* fileInfo);
+    bool saveFileData(QListWidgetItem* item);
+    bool saveAllFile();
+    //bool updateCache(QString& path, QByteArray& data);
+    bool updateCache(CodeFileSys::CodeFileInfo* fileInfo, QByteArray& data);
 
 private:
 

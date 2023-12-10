@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(codeTreeSideWidget->getTreeMenu(), &TreeMenu::openFileSignal,
             codeFileListWidget, &CodeFileListWidget::_on_openFile);
     connect(codeFileListWidget, &CodeFileListWidget::showFileData, codePageEditWidget, &CodePageEditWidget::setTextData);
+    connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::writeContentToCache);
 }
 MainWindow::~MainWindow()
 {

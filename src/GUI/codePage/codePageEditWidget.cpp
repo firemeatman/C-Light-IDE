@@ -1,18 +1,17 @@
 #include "codePageEditWidget.h"
 #include "ui_codePageEditWidget.h"
 #include <QGridLayout>
-//#include "../commonWidget/codeEditor.h"
+#include <QFile>
+
 #include "../../third/QCodeEditor/include/internal/QCodeEditor.hpp"
 #include "../../third/QCodeEditor/include/internal/QSyntaxStyle.hpp"
 #include "../../third/QCodeEditor/include/internal/QCXXHighlighter.hpp"
-
+#include "../../common/global_data.h"
 CodePageEditWidget::CodePageEditWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CodePageEditWidget)
 {
     ui->setupUi(this);
-//    CodeEditor* codeEditor = new CodeEditor(this);
-//    codeEditor->resize(500,500);
     QCodeEditor* m_codeEditor = new QCodeEditor(this);
     QCXXHighlighter* cXXHighlighter = new QCXXHighlighter();
     m_codeEditor->setPlainText  ("int a = 10;");
@@ -25,6 +24,8 @@ CodePageEditWidget::CodePageEditWidget(QWidget *parent) :
     qGridLayout->addWidget(m_codeEditor);
     codeEditor = m_codeEditor;
 
+    //connect(codeEditor, &QPlainTextEdit::textChanged,this,&CodePageEditWidget::_on_textChanged);
+
 }
 
 CodePageEditWidget::~CodePageEditWidget()
@@ -32,10 +33,39 @@ CodePageEditWidget::~CodePageEditWidget()
     delete ui;
 }
 
+void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_S && event->modifiers() == Qt::CTRL){
+        qDebug()<<"ctrl+S";
+        GlobalData::codeFileSys->saveAllFile();
+    }
+}
+
+
 void CodePageEditWidget::setTextData(QByteArray &data)
 {
     QString utf8_str = QString::fromLocal8Bit(data);
     codeEditor->setPlainText(utf8_str);
+}
+
+void CodePageEditWidget::writeContentToCache(CodeFileSys::CodeFileInfo *fileInfo)
+{
+    QString text = codeEditor->toPlainText();
+    QByteArray data = text.toUtf8();
+    if(data.compare(fileInfo->data)){
+        GlobalData::codeFileSys->updateCache(fileInfo, data);
+    }
+}
+
+void CodePageEditWidget::_on_textChanged()
+{
+    if(fileInfo == nullptr){
+        return;
+    }
+    QString text = codeEditor->toPlainText();
+    QByteArray data = text.toUtf8();
+    GlobalData::codeFileSys->updateCache(fileInfo, data);
+
 }
 
 

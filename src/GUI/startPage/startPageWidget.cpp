@@ -25,7 +25,7 @@ void StartPageWidget::_on_clicked_openBtn()
     //定义文件对话框类
     QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
-    fileDialog->setDirectory("C:\temp\jsoncpp-master\example");
+    fileDialog->setDirectory("C:/Users/weihang/Desktop/c语言_笔记");
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setViewMode(QFileDialog::Detail);
 
