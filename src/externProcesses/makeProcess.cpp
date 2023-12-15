@@ -1,13 +1,10 @@
 
 #include "makeProcess.h"
-#include "qapplication.h"
 #include <QDebug>
 MakeProcess::MakeProcess(QObject *parent)
     : QObject{parent}
 {
    process = new QProcess();
-   //process->moveToThread(QApplication::instance()->thread());
-
    connect(process, &QProcess::readyReadStandardOutput, this, &MakeProcess::_on_recvCmdOut);
    connect(process, &QProcess::readyReadStandardError, this, &MakeProcess::_on_recvCmdError);
 }

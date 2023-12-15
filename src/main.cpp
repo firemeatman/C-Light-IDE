@@ -39,10 +39,11 @@ void init_app(){
     GlobalData::setDebugerPath(settings.value("debugerPath","").toString());
     settings.endGroup();
 
-    //为了跨线程在信号中传递自定义参数，为其注册元数据类型
+    // 为了跨线程在信号中传递自定义参数，为其注册元数据类型
     qRegisterMetaType<QString>("QString&");//注册QString的引用
 
     GlobalData::codeFileSys = new CodeFileSys();
+    // 继承QThread实现线程要记住更改所属的线程，包括构造函数中的。可能导致不同线程下new对象产生警告
     GlobalData::ExternProcessThread = new ExternProcessThread();
     GlobalData::ExternProcessThread->moveToThread(GlobalData::ExternProcessThread);
     GlobalData::ExternProcessThread->start();

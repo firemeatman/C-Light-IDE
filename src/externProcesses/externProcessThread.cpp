@@ -7,8 +7,9 @@ ExternProcessThread::ExternProcessThread(QObject *parent)
     : QThread{parent}
 {
     makeProcess = new MakeProcess();
+    makeProcess->moveToThread(this);
+    makeProcess->getProcess()->moveToThread(this);
     commendQueue = new BlockingQueue<QString>();
-
 
 }
 
