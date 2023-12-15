@@ -35,7 +35,10 @@ void TerminalSysteam::startTerminal()
 //    terminalThread->start();
 
 
-      cmdProcess->start("cmd");
+      cmdProcess->setWorkingDirectory("D:/c_workstation/projects/vscode-test");
+      QStringList args;
+      args<<"vscode-test.exe";
+      cmdProcess->start("gdb",args);
       cmdProcess->waitForStarted();
 
 }
@@ -56,13 +59,13 @@ void TerminalSysteam::_on_recvCmdOut()
 {
     QByteArray data = cmdProcess->readAllStandardOutput();
     QString utf8_str=QString::fromLocal8Bit(data);
-    GlobalData::global_terminalWidget->addMsg(utf8_str);
+    //GlobalData::global_terminalWidget->addMsg(utf8_str);
 }
 
 void TerminalSysteam::_on_recvCmdError()
 {
     QByteArray data = cmdProcess->readAllStandardError();
     QString utf8_str=QString::fromLocal8Bit(data);
-    GlobalData::global_terminalWidget->addMsg(utf8_str);
+    //GlobalData::global_mainWindow->->addMsg(utf8_str);
 }
 

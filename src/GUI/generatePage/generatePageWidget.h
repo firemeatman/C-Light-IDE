@@ -20,6 +20,7 @@ private:
 
 public slots:
     void _on_clicked_complierSelectBtn();
+    void _on_clicked_makeSelectBtn();
     void _on_clicked_debugerSelectBtn();
     void _on_clicked_makefileSelectBtn();
 };

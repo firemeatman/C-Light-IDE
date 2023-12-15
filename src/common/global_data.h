@@ -4,10 +4,10 @@
 
 
 #include <QString>
+#include <QMutex>
 #include "../GUI/mainwindow.h"
-#include "../GUI/commonWidget/terminalWidget.h"
-#include "../terminalSys/terminalSysteam.h"
 #include "../codeFileSys/codeFileSys.h"
+#include "../externProcesses/externProcessThread.h"
 //class MainWindow;
 //class TerminalWidget;
 //class TerminalSysteam;
@@ -18,13 +18,30 @@ public:
     GlobalData();
 
     static MainWindow* global_mainWindow;
-    static TerminalWidget* global_terminalWidget;
-    static TerminalSysteam* global_terminalSysteam;
     static CodeFileSys* codeFileSys;
+    static ExternProcessThread* ExternProcessThread;
     static QString ComplierPath;
+
+private:
+
+    static QString MakeProgramPath;
     static QString DebugerPath;
     static QString MakeFilePath;
 
+    static QMutex makeMutex;
+    static QMutex debugMutex;
+
+public:
+
+    static QString getMakeFilePath();
+    static void setMakeFilePath(const QString &newMakeFilePath);
+
+    static QString getMakeProgramPath();
+    static void setMakeProgramPath(const QString &newMakeProgramPath);
+
+
+    static QString getDebugerPath();
+    static void setDebugerPath(const QString &newDebugerPath);
 };
 
 

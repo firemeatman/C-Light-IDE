@@ -14,6 +14,8 @@ SideMenuWidget::SideMenuWidget(QWidget *parent) :
     }
     qssFile.close();
 
+    ui->widget_3->setFixedHeight(250);
+
 
     ui->toolButton->setIcon(QIcon("../resource/play_regular_icon_512px.png"));
     ui->toolButton->setText("开始");
@@ -39,14 +41,14 @@ SideMenuWidget::SideMenuWidget(QWidget *parent) :
     ui->toolButton_5->setIcon(QIcon("../resource/play_regular_icon_512px.png"));
     ui->toolButton_5->setText("运行");
     ui->toolButton_5->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui->toolButton_5->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    ui->toolButton_5->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
     ui->toolButton->setIconSize(QSize(256,256));
     RunBtn = ui->toolButton_5;
 
     ui->toolButton_6->setIcon(QIcon("../resource/play_regular_icon_512px.png"));
     ui->toolButton_6->setText("调试");
     ui->toolButton_6->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui->toolButton_6->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    ui->toolButton_6->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
     //ui->toolButton->setIconSize(QSize(256,256));
 
 

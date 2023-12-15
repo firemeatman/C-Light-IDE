@@ -1,0 +1,19 @@
+#makeInfoWidget{
+	border: 2px solid black;
+
+}
+
+#headWidget{
+	background-color: #cdd1d3;
+}
+
+
+#debugButton{
+	background-color: rgb(123, 163, 1);
+}
+#runButton{
+	background-color: rgb(146, 189, 108);
+}
+#stopButton{
+	background-color:  rgb(255, 125, 125);
+}

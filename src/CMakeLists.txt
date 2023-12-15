@@ -77,6 +77,7 @@ set(PROJECT_SOURCES
         GUI/mainwindow.ui
         common/forceAccess.h common/forceAccess.cpp
         common/global_data.h common/global_data.cpp
+        common/blockingQueue.h
         GUI/commonWidget/terminalWidget.h GUI/commonWidget/terminalWidget.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
@@ -86,9 +87,13 @@ set(PROJECT_SOURCES
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
         GUI/generatePage/generatePageWidget.h GUI/generatePage/generatePageWidget.cpp GUI/generatePage/generatePageWidget.ui
+        GUI/infoWindow/makeInfoWidget.h GUI/infoWindow/makeInfoWidget.cpp GUI/infoWindow/makeInfoWidget.ui
         terminalSys/terminalSysteam.h terminalSys/terminalSysteam.cpp
         terminalSys/terminalThread.h terminalSys/terminalThread.cpp
         codeFileSys/codeFileSys.h codeFileSys/codeFileSys.cpp
+        externProcesses/makeProcess.h externProcesses/makeProcess.cpp
+        externProcesses/debuggerProcess.h externProcesses/debuggerProcess.cpp
+        externProcesses/externProcessThread.h externProcesses/externProcessThread.cpp
         third/TreeMenu.h
         third/TreeMenu.cpp
         third/newBulidFile.h third/newBulidFile.cpp

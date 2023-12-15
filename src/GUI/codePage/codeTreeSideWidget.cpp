@@ -48,7 +48,7 @@ void CodeTreeSideWidget::_on_clicked_openDirBtn()
         //定义文件对话框类
         QFileDialog *fileDialog = new QFileDialog(this);
         fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
-        fileDialog->setDirectory("C:/");
+        fileDialog->setDirectory("D:/c_workstation/projects/vscode-test");
         fileDialog->setFileMode(QFileDialog::Directory);
         fileDialog->setViewMode(QFileDialog::Detail);
 
