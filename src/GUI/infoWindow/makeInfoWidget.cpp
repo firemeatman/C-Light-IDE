@@ -1,5 +1,6 @@
 #include "makeInfoWidget.h"
 #include "ui_makeInfoWidget.h"
+#include "../../common/global_data.h"
 
 MakeInfoWidget::MakeInfoWidget(QWidget *parent) :
     QWidget(parent),
@@ -24,6 +25,8 @@ MakeInfoWidget::MakeInfoWidget(QWidget *parent) :
 
     ErrorTextFormat.setForeground(QBrush(QColor(188,1,46)));
     ErrorTextFormat.setFontPointSize(11);
+
+    connect(ui->cleanButton, &QToolButton::clicked, this, &MakeInfoWidget::_on_cleanButton_clicked);
 }
 
 MakeInfoWidget::~MakeInfoWidget()
@@ -58,3 +61,38 @@ void MakeInfoWidget::addMsg(QString& str)
     plainTextEdit->mergeCurrentCharFormat(NormalTextFormat);
     plainTextEdit->appendPlainText(str);
 }
+
+void MakeInfoWidget::_on_cleanButton_clicked(bool is_checked)
+{
+//    QString makeExePath;
+//    QString mkFilePath;
+//    QString fileName = "";
+    QString outInfo = "开始clean...";
+    if(!is_checked){
+        BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
+        ExternProcessThread::CommendStr commendStr;
+        QMap<QString, QString> params;
+        params.insert("makeExePath", GlobalData::getMakeProgramPath());
+        params.insert("mkFilePath", GlobalData::getMakeFilePath());
+        commendStr.commendName = "clean";
+        commendStr.paramMap = params;
+        commendQueue->put(commendStr);
+        addStr(outInfo,SysInfoMsg);
+    }
+}
+
+void MakeInfoWidget::_cleanCompleted(QString &taskName, int code, QString &info)
+{
+    QString outInfo;
+    if(taskName.compare("clean") != 0){
+        return;
+    }
+    if(code == 0){
+        outInfo = "clean完成!";
+        addStr(outInfo,SysInfoMsg);
+    }else{
+        outInfo = "make程序异常退出，clean失败!";
+        addStr(outInfo,SysErrorMsg);
+    }
+}
+

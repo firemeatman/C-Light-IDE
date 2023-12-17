@@ -89,6 +89,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::writeContentToCache);
     connect(GlobalData::ExternProcessThread->getMakeProcess(), &MakeProcess::msgRecved, makeInfoWidget, &MakeInfoWidget::addMsg);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, this, &MainWindow::_makeComplete);
+    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_cleanCompleted);
 }
 MainWindow::~MainWindow()
 {
@@ -182,14 +183,15 @@ void MainWindow::_on_clicked_makeOutBtn()
 
 void MainWindow::_makeComplete(QString &taskName, int code, QString &info){
     QString outInfo;
-    if(taskName == "make"){
-        if(code == 0){
-            outInfo = "make完成!";
-            makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
-        }else{
-            outInfo = "make程序异常退出!";
-            makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysErrorMsg);
-        }
+    if(taskName != "make"){
+        return;
+    }
+    if(code == 0){
+        outInfo = "make完成!";
+        makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
+    }else{
+        outInfo = "make程序异常退出!";
+        makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysErrorMsg);
     }
     BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
     ExternProcessThread::CommendStr commendStr;

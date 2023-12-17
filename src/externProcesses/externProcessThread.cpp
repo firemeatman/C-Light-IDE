@@ -47,18 +47,17 @@ void ExternProcessThread::run()
         }
         if(!commendQueue->isEmpty()){
             CommendStr commend = commendQueue->take();
-            if(commend.commendName == makeCommend){
+            if(commend.commendName == "make"){
                 QString makeExePath = GlobalData::getMakeProgramPath();
                 QString mkFilePath = GlobalData::getMakeFilePath();
                 QString fileName = "";
                 if(makeProcess->make(makeExePath,mkFilePath,fileName)){
                     info = "";
                     code = 0;
-                    emit taskComplete(makeCommend, code, info);
                 }else{
                     code = -1;
-                    emit taskComplete(makeCommend, code, info);
                 }
+                emit taskComplete(commend.commendName, code, info);
             }else if(commend.commendName == "run target"){
                 QString writeStr;
                 QString workpath;
@@ -72,6 +71,26 @@ void ExternProcessThread::run()
                 writeStr = "cd ";
                 writeStr.append(workpath).append(" && start ").append(exeName).append("\n");
                 targetExeCmdProcess->write(writeStr.toLocal8Bit());
+            }else if(commend.commendName == "clean"){
+                QString makeExePath;
+                QString mkFilePath;
+                QString fileName = "";
+                if(commend.paramMap.contains("makeExePath")){
+                    makeExePath = commend.paramMap["makeExePath"];
+                }
+                if(commend.paramMap.contains("mkFilePath")){
+                    mkFilePath = commend.paramMap["mkFilePath"];
+                }
+                if(commend.paramMap.contains("fileName")){
+                    fileName = commend.paramMap["fileName"];
+                }
+                if(makeProcess->clean(makeExePath,mkFilePath,fileName)){
+                    info = "";
+                    code = 0;
+                }else{
+                    code = -1;
+                }
+                emit taskComplete(commend.commendName, code, info);
             }
         }
         msleep(100); // ms。sleep是秒

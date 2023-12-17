@@ -159,9 +159,16 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="cleanOutButton">
+       <widget class="QToolButton" name="cleanButton">
         <property name="text">
-         <string>清理输出</string>
+         <string>执行clean</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="makeButton">
+        <property name="text">
+         <string>执行make</string>
         </property>
        </widget>
       </item>

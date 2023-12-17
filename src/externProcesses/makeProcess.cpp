@@ -57,8 +57,31 @@ bool MakeProcess::make(QString &makeExePath, QString &mkFilePath, QString& mkFil
 
 }
 
-bool MakeProcess::clean(QString &makeExePath, QString &mkFilePath)
+bool MakeProcess::clean(QString &makeExePath, QString &mkFilePath, QString& mkFileName)
 {
+   QProcess::ProcessState state = process->state();
+   if(state != QProcess::NotRunning){
+       return false;
+   }
+   QStringList args;
+   if(!mkFileName.isEmpty()){
+       args<<"-f"<<mkFileName;
+   }
+   args<<"clean";
+
+   process->setWorkingDirectory(mkFilePath);
+   //process->setNativeArguments();  windows平台下用这个。
+   process->start(makeExePath,args);
+   process->waitForStarted();
+   process->waitForFinished();
+   if(process->exitStatus() == QProcess::NormalExit){
+       int exitCode = process->exitCode();
+       qDebug()<<"make退出代码: "<<exitCode;
+
+   }else{
+       qDebug()<<"make崩溃了";
+   }
+
    return true;
 }
 
