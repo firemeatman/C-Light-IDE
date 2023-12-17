@@ -6,7 +6,7 @@
 #include <QLayout>
 #include <QDockWidget>
 #include <QToolButton>
-
+#include <QMap>
 #include "../common/global_data.h"
 
 #include "sideMenu/sideMenuWidget.h"
@@ -46,9 +46,10 @@ MainWindow::MainWindow(QWidget *parent)
     codeFileListdockWidget = new QDockWidget(this);
 
     codeTreeSidedockWidget->setWidget(codeTreeSideWidget);
-    codeTreeSidedockWidget->setFloating(false);
+    codeTreeSidedockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     makeOutdockWidget->setWidget(makeInfoWidget);
-    makeOutdockWidget->setFloating(false);
+    makeOutdockWidget->setFeatures(QDockWidget::DockWidgetClosable);
+    //makeOutdockWidget->setTitleBarWidget(new QWidget(makeOutdockWidget));
     codeFileListdockWidget->setWidget(codeFileListWidget);
     codeFileListdockWidget->setFloating(false);
     //codeTreeSidedockWidget->resize();
@@ -156,9 +157,14 @@ void MainWindow::_on_clicked_GenerateBtn()
 }
 
 void MainWindow::_on_clicked_RunBtn()
-{   
-    BlockingQueue<QString>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
-    commendQueue->put("make");
+{
+    BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
+    ExternProcessThread::CommendStr commendStr;
+    commendStr.commendName = "make";
+    commendQueue->put(commendStr);
+
+    QString info = "开始make...";
+    makeInfoWidget->addStr(info, MakeInfoWidget::SysInfoMsg);
     sideMenuWidget->RunBtn->setDisabled(true);
 }
 
@@ -175,13 +181,27 @@ void MainWindow::_on_clicked_makeOutBtn()
 }
 
 void MainWindow::_makeComplete(QString &taskName, int code, QString &info){
+    QString outInfo;
     if(taskName == "make"){
         if(code == 0){
-            qDebug()<<"make完成";
+            outInfo = "make完成!";
+            makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
         }else{
-            qDebug()<<"make失败";
+            outInfo = "make程序异常退出!";
+            makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysErrorMsg);
         }
     }
+    BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
+    ExternProcessThread::CommendStr commendStr;
+    QMap<QString, QString> params;
+    params.insert("workpath", GlobalData::getMakeFilePath());
+    params.insert("exeName", "vscode-test.exe");
+    commendStr.commendName = "run target";
+    commendStr.paramMap = params;
+    commendQueue->put(commendStr);
+
+    outInfo = "运行生成的程序";
+    makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
     sideMenuWidget->RunBtn->setDisabled(false);
 }
 

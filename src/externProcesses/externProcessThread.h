@@ -7,6 +7,7 @@
 #include <QMutex>
 
 #include <QObject>
+#include <QMap>
 #include "debuggerProcess.h"
 #include "makeProcess.h"
 #include "../common/blockingQueue.h"
@@ -14,6 +15,14 @@
 class ExternProcessThread : public QThread
 {
     Q_OBJECT
+public:
+    class CommendStr{
+    public:
+        QString commendName;
+        QMap<QString, QString> paramMap;
+    };
+
+
 public:   
     explicit ExternProcessThread(QObject *parent = nullptr);
     ~ExternProcessThread();
@@ -26,13 +35,16 @@ public:
     void setDebuggerProcess(DebuggerProcess *newDebuggerProcess);
     MakeProcess *getMakeProcess() const;
     void setMakeProcess(MakeProcess *newMakeProcess);
-    BlockingQueue<QString> *getCommendQueue() const;
-    void setCommendQueue(BlockingQueue<QString> *newCommendQueue);
+
+
+    BlockingQueue<ExternProcessThread::CommendStr> *getCommendQueue() const;
+    void setCommendQueue(BlockingQueue<ExternProcessThread::CommendStr> *newCommendQueue);
 
 private:
     DebuggerProcess* debuggerProcess = nullptr;
     MakeProcess* makeProcess = nullptr;
-    BlockingQueue<QString>* commendQueue;
+    QProcess* targetExeCmdProcess = nullptr;
+    BlockingQueue<ExternProcessThread::CommendStr>* commendQueue;
 
 signals:
     void taskComplete(QString &taskName, int code, QString &info);
