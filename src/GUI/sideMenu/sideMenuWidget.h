@@ -23,7 +23,10 @@ public:
 private:
     Ui::SideMenuWidget *ui;
 
+public slots:
+    void _on_clicked_RunBtn();
 
+    void _on_runBtnTaskComplete(QString &taskName, int code, QString &info, QString& from);
 };
 
 #endif // SIDEMENUWIDGET_H

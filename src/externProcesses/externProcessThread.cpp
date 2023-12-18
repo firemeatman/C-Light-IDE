@@ -39,6 +39,7 @@ void ExternProcessThread::run()
 
     QString info = "";
     int code = 0;
+    bool doflag = false;
     targetExeCmdProcess->start("cmd.exe");
     targetExeCmdProcess->waitForStarted();
     forever{
@@ -47,51 +48,24 @@ void ExternProcessThread::run()
         }
         if(!commendQueue->isEmpty()){
             CommendStr commend = commendQueue->take();
-            if(commend.commendName == "make"){
-                QString makeExePath = GlobalData::getMakeProgramPath();
-                QString mkFilePath = GlobalData::getMakeFilePath();
-                QString fileName = "";
-                if(makeProcess->make(makeExePath,mkFilePath,fileName)){
-                    info = "";
-                    code = 0;
-                }else{
-                    code = -1;
-                }
-                emit taskComplete(commend.commendName, code, info);
-            }else if(commend.commendName == "run target"){
-                QString writeStr;
-                QString workpath;
-                QString exeName;
-                if(commend.paramMap.contains("workpath")){
-                    workpath = commend.paramMap["workpath"];
-                }
-                if(commend.paramMap.contains("exeName")){
-                    exeName = commend.paramMap["exeName"];
-                }
-                writeStr = "cd ";
-                writeStr.append(workpath).append(" && start ").append(exeName).append("\n");
-                targetExeCmdProcess->write(writeStr.toLocal8Bit());
+            emit taskStart(commend.commendName, commend.from);
+
+            if(commend.commendName == "make"){    
+                makeHandel(commend, &code);
+                doflag = true;
             }else if(commend.commendName == "clean"){
-                QString makeExePath;
-                QString mkFilePath;
-                QString fileName = "";
-                if(commend.paramMap.contains("makeExePath")){
-                    makeExePath = commend.paramMap["makeExePath"];
-                }
-                if(commend.paramMap.contains("mkFilePath")){
-                    mkFilePath = commend.paramMap["mkFilePath"];
-                }
-                if(commend.paramMap.contains("fileName")){
-                    fileName = commend.paramMap["fileName"];
-                }
-                if(makeProcess->clean(makeExePath,mkFilePath,fileName)){
-                    info = "";
-                    code = 0;
-                }else{
-                    code = -1;
-                }
-                emit taskComplete(commend.commendName, code, info);
+                cleanHandel(commend, &code);
+                doflag = true;
+            }else if(commend.commendName == "run target"){
+                runTargetHandel(commend, &code);
+                doflag = true;
             }
+            if(!doflag){
+                code = -2;
+                info = "系统错误!";
+            }
+            emit taskComplete(commend.commendName, code, info, commend.from);
+            doflag = false;
         }
         msleep(100); // ms。sleep是秒
     }
@@ -100,6 +74,58 @@ void ExternProcessThread::run()
     return;
 
 }
+
+void ExternProcessThread::makeHandel(CommendStr &commend, int* code)
+{
+    QString makeExePath = GlobalData::getMakeProgramPath();
+    QString mkFilePath = GlobalData::getMakeFilePath();
+    QString fileName = "";
+    if(makeProcess->make(makeExePath,mkFilePath,fileName)){
+        *code = 0;
+    }else{
+        *code = -1;
+    }
+}
+
+void ExternProcessThread::cleanHandel(CommendStr &commend, int* code)
+{
+    QString makeExePath;
+    QString mkFilePath;
+    QString fileName = "";
+    if(commend.paramMap.contains("makeExePath")){
+        makeExePath = commend.paramMap["makeExePath"];
+    }
+    if(commend.paramMap.contains("mkFilePath")){
+        mkFilePath = commend.paramMap["mkFilePath"];
+    }
+    if(commend.paramMap.contains("fileName")){
+        fileName = commend.paramMap["fileName"];
+    }
+    if(makeProcess->clean(makeExePath,mkFilePath,fileName)){
+        *code = 0;
+    }else{
+        *code = -1;
+    }
+}
+
+void ExternProcessThread::runTargetHandel(CommendStr &commend, int* code)
+{
+    QString writeStr;
+    QString workpath;
+    QString exeName;
+    if(commend.paramMap.contains("workpath")){
+        workpath = commend.paramMap["workpath"];
+    }
+    if(commend.paramMap.contains("exeName")){
+        exeName = commend.paramMap["exeName"];
+    }
+    writeStr = "cd ";
+    writeStr.append(workpath).append(" && start ").append(exeName).append("\n");
+    targetExeCmdProcess->write(writeStr.toLocal8Bit());
+    targetExeCmdProcess->waitForBytesWritten(3000);
+}
+
+
 
 DebuggerProcess *ExternProcessThread::getDebuggerProcess() const
 {
@@ -130,5 +156,7 @@ void ExternProcessThread::setCommendQueue(BlockingQueue<ExternProcessThread::Com
 {
     commendQueue = newCommendQueue;
 }
+
+
 
 

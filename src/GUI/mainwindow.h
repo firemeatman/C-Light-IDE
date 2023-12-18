@@ -26,10 +26,19 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    CodeTreeSideWidget *getCodeTreeSideWidget() const;
 
+    QDockWidget *getCodeTreeSidedockWidget() const;
+    QDockWidget *getMakeOutdockWidget() const;
+    QDockWidget *getCodeFileListdockWidget() const;
+    SideMenuWidget *getSideMenuWidget() const;
+    StartPageWidget *getStartPageWidget() const;
+    CodePageEditWidget *getCodePageEditWidget() const;
+    CodeTreeSideWidget *getCodeTreeSideWidget() const;
     CodeFileListWidget *getCodeFileListWidget() const;
-    void setCodeFileListWidget(CodeFileListWidget *newCodeFileListWidget);
+    MakeInfoWidget *getMakeInfoWidget() const;
+    GeneratePageWidget *getGeneratePageWidget() const;
+    QPushButton *getProgramOutBtn() const;
+    QPushButton *getMakeOutBtn() const;
 
 private:
     Ui::MainWindow *ui;
@@ -49,15 +58,16 @@ private:
     QPushButton* programOutBtn;
     QPushButton* makeOutBtn;
 
+
+
 public slots:
     void _on_clicked_StartBtn();
     void _on_clicked_CodeBtn();
     void _on_clicked_GenerateBtn();
-    void _on_clicked_RunBtn();
+
     void _on_clicked_programOutBtn();
     void _on_clicked_makeOutBtn();
 
-    void _makeComplete(QString &taskName, int code, QString &info);
 };
 
 #endif // MAINWINDOW_H

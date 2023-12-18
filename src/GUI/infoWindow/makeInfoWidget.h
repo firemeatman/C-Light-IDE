@@ -37,7 +37,8 @@ private:
 public slots:
     void addMsg(QString &str);
     void _on_cleanButton_clicked(bool is_checked);
-    void _cleanCompleted(QString &taskName, int code, QString &info);
+    void _on_makeCompleted(QString &taskName, int code, QString &info, QString& from);
+    void _on_makeStart(QString &taskName, QString& from);
 };
 
 #endif // MAKEINFOWIDGET_H

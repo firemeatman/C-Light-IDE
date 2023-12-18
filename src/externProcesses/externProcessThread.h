@@ -20,6 +20,7 @@ public:
     public:
         QString commendName;
         QMap<QString, QString> paramMap;
+        QString from;
     };
 
 
@@ -28,15 +29,10 @@ public:
     ~ExternProcessThread();
     void run() override;
 
-    QString makeCommend = "make";
-
-
     DebuggerProcess *getDebuggerProcess() const;
     void setDebuggerProcess(DebuggerProcess *newDebuggerProcess);
     MakeProcess *getMakeProcess() const;
     void setMakeProcess(MakeProcess *newMakeProcess);
-
-
     BlockingQueue<ExternProcessThread::CommendStr> *getCommendQueue() const;
     void setCommendQueue(BlockingQueue<ExternProcessThread::CommendStr> *newCommendQueue);
 
@@ -46,8 +42,13 @@ private:
     QProcess* targetExeCmdProcess = nullptr;
     BlockingQueue<ExternProcessThread::CommendStr>* commendQueue;
 
+    void makeHandel(ExternProcessThread::CommendStr& commend, int* code);
+    void cleanHandel(ExternProcessThread::CommendStr& commend, int* code);
+    void runTargetHandel(ExternProcessThread::CommendStr& commend, int* code);
+
 signals:
-    void taskComplete(QString &taskName, int code, QString &info);
+    void taskComplete(QString &taskName, int code, QString &info, QString& from);
+    void taskStart(QString &taskName, QString& from);
 };
 
 #endif // EXTERNPROCESSTHREAD_H

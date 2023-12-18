@@ -64,10 +64,6 @@ void MakeInfoWidget::addMsg(QString& str)
 
 void MakeInfoWidget::_on_cleanButton_clicked(bool is_checked)
 {
-//    QString makeExePath;
-//    QString mkFilePath;
-//    QString fileName = "";
-    QString outInfo = "开始clean...";
     if(!is_checked){
         BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
         ExternProcessThread::CommendStr commendStr;
@@ -77,22 +73,39 @@ void MakeInfoWidget::_on_cleanButton_clicked(bool is_checked)
         commendStr.commendName = "clean";
         commendStr.paramMap = params;
         commendQueue->put(commendStr);
-        addStr(outInfo,SysInfoMsg);
     }
 }
 
-void MakeInfoWidget::_cleanCompleted(QString &taskName, int code, QString &info)
+void MakeInfoWidget::_on_makeCompleted(QString &taskName, int code, QString &info, QString& from)
 {
     QString outInfo;
-    if(taskName.compare("clean") != 0){
-        return;
+    MakeInfoWidget::MsgType type = SysInfoMsg;
+    if(taskName == "make"){
+        if(code == 0){
+            outInfo = "make完成!";
+        }else{
+            type = SysErrorMsg;
+            outInfo = "make程序异常退出，make失败!";
+        }
+    }else if(taskName == "clean"){
+        if(code == 0){
+            outInfo = "clean完成!";
+        }else{
+            type = SysErrorMsg;
+            outInfo = "make程序异常退出，clean失败!";
+        }
     }
-    if(code == 0){
-        outInfo = "clean完成!";
-        addStr(outInfo,SysInfoMsg);
-    }else{
-        outInfo = "make程序异常退出，clean失败!";
-        addStr(outInfo,SysErrorMsg);
+    addStr(outInfo,type);
+}
+
+void MakeInfoWidget::_on_makeStart(QString &taskName, QString &from)
+{
+    QString outInfo;
+    if(taskName == "make"){
+        outInfo = "开始make...";
+    }else if(taskName == "clean"){
+        outInfo = "开始clean...";
     }
+    addStr(outInfo,SysInfoMsg);
 }
 

@@ -30,8 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->setMovable(false);
     toolBar->setStyleSheet("QToolBar{border:0px solid white;}");
     toolBar->setFixedWidth(70);
-    //toolBar->setFixedWidth(50);
     this->addToolBar(Qt::LeftToolBarArea, toolBar);
+
     // 初始化主要窗口
     startPageWidget = new StartPageWidget(this);
     codePageEditWidget = new CodePageEditWidget(this);
@@ -60,9 +60,10 @@ MainWindow::MainWindow(QWidget *parent)
     generatePageWidget->hide();
     makeOutdockWidget->hide();
 
-    // 设置主窗口、dock窗口设置、设置状态栏
+    // 设置主窗口、dock窗口设置
     this->setCentralWidget(startPageWidget);
     this->setDockNestingEnabled(true);
+    // 设置状态栏
     this->programOutBtn = new QPushButton(this);
     this->makeOutBtn = new QPushButton(this);
     QWidget* spacer = new QWidget(this);
@@ -74,26 +75,58 @@ MainWindow::MainWindow(QWidget *parent)
     this->statusBar()->addWidget(programOutBtn);
     this->statusBar()->addWidget(makeOutBtn);
 
-//    codeTreeSideWidget->getTreeMenu()->getNewDirWidget()->setParent(this);
-//    codeTreeSideWidget->getTreeMenu()->getNewFileWidget()->setParent(this);
+    //===============================信号===========================================
 
+    // 主窗口整体信号连接
     connect(sideMenuWidget->StartBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_StartBtn);
     connect(sideMenuWidget->CodeBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_CodeBtn);
     connect(sideMenuWidget->GenerateBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_GenerateBtn);
-    connect(sideMenuWidget->RunBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_RunBtn);
     connect(this->makeOutBtn, &QPushButton::clicked, this, &MainWindow::_on_clicked_makeOutBtn);
 
+    // GUI部件之间的信号连接
     connect(codeTreeSideWidget->getTreeMenu(), &TreeMenu::openFileSignal,
             codeFileListWidget, &CodeFileListWidget::_on_openFile);
     connect(codeFileListWidget, &CodeFileListWidget::showFileData, codePageEditWidget, &CodePageEditWidget::setTextData);
     connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::writeContentToCache);
+    // 外部程序相关信号连接
     connect(GlobalData::ExternProcessThread->getMakeProcess(), &MakeProcess::msgRecved, makeInfoWidget, &MakeInfoWidget::addMsg);
-    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, this, &MainWindow::_makeComplete);
-    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_cleanCompleted);
+    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_on_makeCompleted);
+    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskStart, makeInfoWidget, &MakeInfoWidget::_on_makeStart);
+    connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, sideMenuWidget, &SideMenuWidget::_on_runBtnTaskComplete);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+QDockWidget *MainWindow::getCodeTreeSidedockWidget() const
+{
+    return codeTreeSidedockWidget;
+}
+
+QDockWidget *MainWindow::getMakeOutdockWidget() const
+{
+    return makeOutdockWidget;
+}
+
+QDockWidget *MainWindow::getCodeFileListdockWidget() const
+{
+    return codeFileListdockWidget;
+}
+
+SideMenuWidget *MainWindow::getSideMenuWidget() const
+{
+    return sideMenuWidget;
+}
+
+StartPageWidget *MainWindow::getStartPageWidget() const
+{
+    return startPageWidget;
+}
+
+CodePageEditWidget *MainWindow::getCodePageEditWidget() const
+{
+    return codePageEditWidget;
 }
 
 CodeTreeSideWidget *MainWindow::getCodeTreeSideWidget() const
@@ -106,10 +139,27 @@ CodeFileListWidget *MainWindow::getCodeFileListWidget() const
     return codeFileListWidget;
 }
 
-void MainWindow::setCodeFileListWidget(CodeFileListWidget *newCodeFileListWidget)
+MakeInfoWidget *MainWindow::getMakeInfoWidget() const
 {
-    codeFileListWidget = newCodeFileListWidget;
+    return makeInfoWidget;
 }
+
+GeneratePageWidget *MainWindow::getGeneratePageWidget() const
+{
+    return generatePageWidget;
+}
+
+QPushButton *MainWindow::getProgramOutBtn() const
+{
+    return programOutBtn;
+}
+
+QPushButton *MainWindow::getMakeOutBtn() const
+{
+    return makeOutBtn;
+}
+
+
 
 void MainWindow::_on_clicked_StartBtn()
 {
@@ -133,7 +183,6 @@ void MainWindow::_on_clicked_CodeBtn()
     this->setCentralWidget(codePageEditWidget);
     this->addDockWidget(Qt::LeftDockWidgetArea, codeTreeSidedockWidget);
     this->splitDockWidget(codeTreeSidedockWidget,codeFileListdockWidget,Qt::Horizontal);
-//    this->addDockWidget(Qt::LeftDockWidgetArea, codeFileListdockWidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, makeOutdockWidget);
     codePageEditWidget->show();
     codeTreeSidedockWidget->show();
@@ -157,17 +206,6 @@ void MainWindow::_on_clicked_GenerateBtn()
     generatePageWidget->show();
 }
 
-void MainWindow::_on_clicked_RunBtn()
-{
-    BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
-    ExternProcessThread::CommendStr commendStr;
-    commendStr.commendName = "make";
-    commendQueue->put(commendStr);
-
-    QString info = "开始make...";
-    makeInfoWidget->addStr(info, MakeInfoWidget::SysInfoMsg);
-    sideMenuWidget->RunBtn->setDisabled(true);
-}
 
 void MainWindow::_on_clicked_programOutBtn()
 {
@@ -176,35 +214,15 @@ void MainWindow::_on_clicked_programOutBtn()
 
 void MainWindow::_on_clicked_makeOutBtn()
 {
-
-    this->addDockWidget(Qt::BottomDockWidgetArea,makeOutdockWidget);
-    this->makeOutdockWidget->show();
-}
-
-void MainWindow::_makeComplete(QString &taskName, int code, QString &info){
-    QString outInfo;
-    if(taskName != "make"){
-        return;
-    }
-    if(code == 0){
-        outInfo = "make完成!";
-        makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
+    if(this->makeOutdockWidget->isHidden()){
+        this->addDockWidget(Qt::BottomDockWidgetArea,makeOutdockWidget);
+        this->makeOutdockWidget->show();
     }else{
-        outInfo = "make程序异常退出!";
-        makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysErrorMsg);
+        this->removeDockWidget(makeOutdockWidget);
     }
-    BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
-    ExternProcessThread::CommendStr commendStr;
-    QMap<QString, QString> params;
-    params.insert("workpath", GlobalData::getMakeFilePath());
-    params.insert("exeName", "vscode-test.exe");
-    commendStr.commendName = "run target";
-    commendStr.paramMap = params;
-    commendQueue->put(commendStr);
 
-    outInfo = "运行生成的程序";
-    makeInfoWidget->addStr(outInfo, MakeInfoWidget::SysInfoMsg);
-    sideMenuWidget->RunBtn->setDisabled(false);
 }
+
+
 
 
