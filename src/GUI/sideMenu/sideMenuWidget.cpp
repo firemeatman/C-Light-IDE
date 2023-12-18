@@ -2,7 +2,7 @@
 #include "ui_sideMenuWidget.h"
 #include <QStyle>
 #include <QFile>
-
+#include <QFileInfo>
 #include "../../common/global_data.h"
 
 SideMenuWidget::SideMenuWidget(QWidget *parent) :
@@ -68,8 +68,14 @@ void SideMenuWidget::_on_clicked_RunBtn()
 {
     BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
     ExternProcessThread::CommendStr commendStr;
+    QMap<QString, QString> params;
+    params.insert("makeExePath", GlobalData::makeExePath);
+    params.insert("mkFileDir", GlobalData::mainMakefileDir);
+    params.insert("mkFileName", GlobalData::mainMakefileFullName);
+
     commendStr.commendName = "make";
     commendStr.from ="menuRunBtn";
+    commendStr.paramMap = params;
     commendQueue->put(commendStr);
 
     GlobalData::global_mainWindow->_on_clicked_makeOutBtn();
@@ -86,8 +92,9 @@ void SideMenuWidget::_on_runBtnTaskComplete(QString &taskName, int code, QString
             BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
             ExternProcessThread::CommendStr commendStr;
             QMap<QString, QString> params;
-            params.insert("workpath", GlobalData::getMakeFilePath());
-            params.insert("exeName", "vscode-test.exe");
+            params.insert("workpath", GlobalData::targetExeDir);
+            params.insert("exeName", GlobalData::targetExeName);
+
             commendStr.commendName = "run target";
             commendStr.from = ownName;
             commendStr.paramMap = params;

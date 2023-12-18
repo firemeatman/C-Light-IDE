@@ -33,10 +33,15 @@ void init_app(){
     // 读取配置
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("gengerateSetting");
-    GlobalData::ComplierPath = settings.value("complierPath","").toString();
-    GlobalData::setMakeProgramPath(settings.value("makeProgramPath","").toString());
-    GlobalData::setMakeFilePath(settings.value("makeFilePath","").toString());
-    GlobalData::setDebugerPath(settings.value("debugerPath","").toString());
+    GlobalData::complierDir = settings.value("complierDir","").toString();
+    GlobalData::makeExePath = settings.value("makeExePath","").toString();
+    GlobalData::mainMakefilePath = settings.value("mainMakefilePath","").toString();
+    GlobalData::mainMakefileDir = settings.value("mainMakefileDir","").toString();
+    GlobalData::mainMakefileFullName = settings.value("mainMakefileFullName","").toString();
+    GlobalData::targetExeDir = settings.value("targetExeDir","").toString();
+    GlobalData::targetExeName = settings.value("targetExeName","").toString();
+    GlobalData::debugerExePath = settings.value("debugerExePath","").toString();
+    GlobalData::lastProjectDir = settings.value("lastProjectDir","").toString();
     settings.endGroup();
 
     // 为了跨线程在信号中传递自定义参数，为其注册元数据类型
@@ -53,10 +58,15 @@ void init_app(){
 void save_data(){
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("gengerateSetting");
-    settings.setValue("complierPath",GlobalData::ComplierPath);
-    settings.setValue("makeProgramPath",GlobalData::getMakeProgramPath());
-    settings.setValue("makeFilePath",GlobalData::getMakeFilePath());
-    settings.setValue("debugerPath",GlobalData::getDebugerPath());
+    settings.setValue("complierDir",GlobalData::complierDir);
+    settings.setValue("makeExePath",GlobalData::makeExePath);
+    settings.setValue("mainMakefilePath",GlobalData::mainMakefilePath);
+    settings.setValue("mainMakefileDir",GlobalData::mainMakefileDir);
+    settings.setValue("mainMakefileFullName",GlobalData::mainMakefileFullName);
+    settings.setValue("targetExeDir",GlobalData::targetExeDir);
+    settings.setValue("targetExeName",GlobalData::targetExeName);
+    settings.setValue("debugerExePath",GlobalData::debugerExePath);
+    settings.setValue("lastProjectDir",GlobalData::lastProjectDir);
     settings.endGroup();
 
 }

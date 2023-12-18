@@ -64,12 +64,14 @@ void MakeInfoWidget::addMsg(QString& str)
 
 void MakeInfoWidget::_on_cleanButton_clicked(bool is_checked)
 {
+
     if(!is_checked){
         BlockingQueue<ExternProcessThread::CommendStr>* commendQueue = GlobalData::ExternProcessThread->getCommendQueue();
         ExternProcessThread::CommendStr commendStr;
         QMap<QString, QString> params;
-        params.insert("makeExePath", GlobalData::getMakeProgramPath());
-        params.insert("mkFilePath", GlobalData::getMakeFilePath());
+        params.insert("makeExePath", GlobalData::makeExePath);
+        params.insert("mkFileDir", GlobalData::mainMakefileDir);
+        params.insert("mkFileName", GlobalData::mainMakefileFullName);
         commendStr.commendName = "clean";
         commendStr.paramMap = params;
         commendQueue->put(commendStr);

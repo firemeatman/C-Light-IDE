@@ -3,7 +3,7 @@
 
 #include <QPushButton>
 #include <QFileDialog>
-
+#include "../../common/global_data.h"
 CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CodeTreeSideWidget)
@@ -12,6 +12,9 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     treeMenu = new TreeMenu(this);
     ui->verticalLayout->addWidget(treeMenu);
     treeMenu->hide();
+
+    ui->pushButton->setFixedSize(100,35);
+
     connect(ui->pushButton, &QPushButton::clicked, this, &CodeTreeSideWidget::_on_clicked_openDirBtn);
 
 }
@@ -48,6 +51,9 @@ void CodeTreeSideWidget::_on_clicked_openDirBtn()
         //定义文件对话框类
         QFileDialog *fileDialog = new QFileDialog(this);
         fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
+        if(!GlobalData::lastProjectDir.isEmpty()){
+            fileDialog->setDirectory(GlobalData::lastProjectDir);
+        }
         fileDialog->setDirectory("D:/c_workstation/projects/vscode-test");
         fileDialog->setFileMode(QFileDialog::Directory);
         fileDialog->setViewMode(QFileDialog::Detail);
@@ -57,6 +63,7 @@ void CodeTreeSideWidget::_on_clicked_openDirBtn()
         if (fileDialog->exec()) {
             fileNames = fileDialog->selectedFiles();
             QString path = fileNames.at(0);
+            GlobalData::lastProjectDir = path;
             treeMenu->openFileTree(path);
             switchState(CodeTreeSideWidget::OPEN_DIR);
         }

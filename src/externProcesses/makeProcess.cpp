@@ -29,18 +29,14 @@ void MakeProcess::closeProcess()
    process->waitForFinished();
 }
 
-bool MakeProcess::make(QString &makeExePath, QString &mkFilePath, QString& mkFileName)
+bool MakeProcess::make(QString &makeExePath, QString &mkFileDir, QString &mkFileName)
 {
    QProcess::ProcessState state = process->state();
    if(state != QProcess::NotRunning){
        return false;
    }
    QStringList args;
-   if(!mkFileName.isEmpty()){
-       args<<"-f"<<mkFileName;
-   }
-
-   process->setWorkingDirectory(mkFilePath);
+   args<<"-C"<<mkFileDir<<"-f"<<mkFileName;
    //process->setNativeArguments();  windows平台下用这个。
    process->start(makeExePath,args);
    process->waitForStarted();
@@ -57,19 +53,15 @@ bool MakeProcess::make(QString &makeExePath, QString &mkFilePath, QString& mkFil
 
 }
 
-bool MakeProcess::clean(QString &makeExePath, QString &mkFilePath, QString& mkFileName)
+bool MakeProcess::clean(QString &makeExePath, QString &mkFileDir, QString &mkFileName)
 {
    QProcess::ProcessState state = process->state();
    if(state != QProcess::NotRunning){
        return false;
    }
    QStringList args;
-   if(!mkFileName.isEmpty()){
-       args<<"-f"<<mkFileName;
-   }
-   args<<"clean";
+   args<<"-C"<<mkFileDir<<"-f"<<mkFileName<<"clean";
 
-   process->setWorkingDirectory(mkFilePath);
    //process->setNativeArguments();  windows平台下用这个。
    process->start(makeExePath,args);
    process->waitForStarted();

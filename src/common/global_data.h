@@ -20,28 +20,24 @@ public:
     static MainWindow* global_mainWindow;
     static CodeFileSys* codeFileSys;
     static ExternProcessThread* ExternProcessThread;
-    static QString ComplierPath;
+
+    static QString complierDir;
+    static QString makeExePath;
+    static QString mainMakefilePath;
+    static QString mainMakefileDir;
+    static QString mainMakefileFullName;
+    static QString targetExeDir;
+    static QString targetExeName;
+    static QString debugerExePath;
+
+    static QString lastProjectDir;
+
 
 private:
-
-    static QString MakeProgramPath;
-    static QString DebugerPath;
-    static QString MakeFilePath;
-
-    static QMutex makeMutex;
-    static QMutex debugMutex;
-
-public:
-
-    static QString getMakeFilePath();
-    static void setMakeFilePath(const QString &newMakeFilePath);
-
-    static QString getMakeProgramPath();
-    static void setMakeProgramPath(const QString &newMakeProgramPath);
+//    static QMutex makeMutex;
+//    static QMutex debugMutex;
 
 
-    static QString getDebugerPath();
-    static void setDebugerPath(const QString &newDebugerPath);
 };
 
 

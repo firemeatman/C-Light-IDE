@@ -25,7 +25,10 @@ void StartPageWidget::_on_clicked_openBtn()
     //定义文件对话框类
     QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
-    fileDialog->setDirectory("C:/Users/weihang/Desktop/c语言_笔记");
+    if(!GlobalData::lastProjectDir.isEmpty()){
+        fileDialog->setDirectory(GlobalData::lastProjectDir);
+    }
+
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setViewMode(QFileDialog::Detail);
 
@@ -34,6 +37,7 @@ void StartPageWidget::_on_clicked_openBtn()
     if (fileDialog->exec()) {
         fileNames = fileDialog->selectedFiles();
         QString path = fileNames.at(0);
+        GlobalData::lastProjectDir = path;
         GlobalData::global_mainWindow->_on_clicked_CodeBtn();
         CodeTreeSideWidget* treeSideWidget = GlobalData::global_mainWindow->getCodeTreeSideWidget();
         treeSideWidget->switchState(CodeTreeSideWidget::OPEN_DIR);

@@ -15,8 +15,8 @@ public:
     void startProcess(QString& exePath, QString& workDir);
     void closeProcess();
 
-    bool make(QString& makeExePath, QString& mkFilePath, QString& mkFileName);
-    bool clean(QString& makeExePath, QString& mkFilePath, QString& mkFileName);
+    bool make(QString &makeExePath, QString &mkFileDir, QString &mkFileName);
+    bool clean(QString &makeExePath, QString &mkFileDir, QString &mkFileName);
 
     QProcess *getProcess() const;
 

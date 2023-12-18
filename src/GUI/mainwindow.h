@@ -9,7 +9,9 @@ class SideMenuWidget;
 class StartPageWidget;
 class CodePageEditWidget;
 class CodeTreeSideWidget;
-class GeneratePageWidget;
+class GenerateSideMenu;
+class MakeConfigWidget;
+class DebugConfigWidget;
 
 class CodeFileListWidget;
 class MakeInfoWidget;
@@ -36,9 +38,14 @@ public:
     CodeTreeSideWidget *getCodeTreeSideWidget() const;
     CodeFileListWidget *getCodeFileListWidget() const;
     MakeInfoWidget *getMakeInfoWidget() const;
-    GeneratePageWidget *getGeneratePageWidget() const;
+
     QPushButton *getProgramOutBtn() const;
     QPushButton *getMakeOutBtn() const;
+
+    QDockWidget *getGenerateSideMenuDockWidget() const;
+    GenerateSideMenu *getGenerateSideMenuWidget() const;
+    MakeConfigWidget *getMakeConfigWidget() const;
+    DebugConfigWidget *getDebugConfigWidget() const;
 
 private:
     Ui::MainWindow *ui;
@@ -46,6 +53,7 @@ private:
     QDockWidget* codeTreeSidedockWidget;
     QDockWidget* makeOutdockWidget;
     QDockWidget* codeFileListdockWidget;
+    QDockWidget* generateSideMenuDockWidget;
 
     SideMenuWidget* sideMenuWidget;
     StartPageWidget* startPageWidget;
@@ -53,7 +61,9 @@ private:
     CodeTreeSideWidget* codeTreeSideWidget;
     CodeFileListWidget* codeFileListWidget;
     MakeInfoWidget* makeInfoWidget = nullptr;
-    GeneratePageWidget* generatePageWidget;
+    GenerateSideMenu* generateSideMenuWidget;
+    MakeConfigWidget* makeConfigWidget;
+    DebugConfigWidget* debugConfigWidget;
 
     QPushButton* programOutBtn;
     QPushButton* makeOutBtn;

@@ -86,7 +86,9 @@ set(PROJECT_SOURCES
         GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
-        GUI/generatePage/generatePageWidget.h GUI/generatePage/generatePageWidget.cpp GUI/generatePage/generatePageWidget.ui
+        GUI/generatePage/makeConfigWidget.h GUI/generatePage/makeConfigWidget.cpp GUI/generatePage/makeConfigWidget.ui
+        GUI/generatePage/generateSideMenu.h GUI/generatePage/generateSideMenu.cpp GUI/generatePage/generateSideMenu.ui
+        GUI/generatePage/debugConfigWidget.h GUI/generatePage/debugConfigWidget.cpp GUI/generatePage/debugConfigWidget.ui
         GUI/infoWindow/makeInfoWidget.h GUI/infoWindow/makeInfoWidget.cpp GUI/infoWindow/makeInfoWidget.ui
         terminalSys/terminalSysteam.h terminalSys/terminalSysteam.cpp
         terminalSys/terminalThread.h terminalSys/terminalThread.cpp

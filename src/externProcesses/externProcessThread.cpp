@@ -77,10 +77,20 @@ void ExternProcessThread::run()
 
 void ExternProcessThread::makeHandel(CommendStr &commend, int* code)
 {
-    QString makeExePath = GlobalData::getMakeProgramPath();
-    QString mkFilePath = GlobalData::getMakeFilePath();
-    QString fileName = "";
-    if(makeProcess->make(makeExePath,mkFilePath,fileName)){
+    QString makeExePath;
+    QString mkFileDir;
+    QString mkFileName;
+    if(commend.paramMap.contains("makeExePath")){
+        makeExePath = commend.paramMap["makeExePath"];
+    }
+    if(commend.paramMap.contains("mkFileDir")){
+        mkFileDir = commend.paramMap["mkFileDir"];
+    }
+    if(commend.paramMap.contains("mkFileName")){
+        mkFileName = commend.paramMap["mkFileName"];
+    }
+
+    if(makeProcess->make(makeExePath,mkFileDir,mkFileName)){
         *code = 0;
     }else{
         *code = -1;
@@ -90,18 +100,18 @@ void ExternProcessThread::makeHandel(CommendStr &commend, int* code)
 void ExternProcessThread::cleanHandel(CommendStr &commend, int* code)
 {
     QString makeExePath;
-    QString mkFilePath;
-    QString fileName = "";
+    QString mkFileDir;
+    QString mkFileName;
     if(commend.paramMap.contains("makeExePath")){
         makeExePath = commend.paramMap["makeExePath"];
     }
-    if(commend.paramMap.contains("mkFilePath")){
-        mkFilePath = commend.paramMap["mkFilePath"];
+    if(commend.paramMap.contains("mkFileDir")){
+        mkFileDir = commend.paramMap["mkFileDir"];
     }
-    if(commend.paramMap.contains("fileName")){
-        fileName = commend.paramMap["fileName"];
+    if(commend.paramMap.contains("mkFileName")){
+        mkFileName = commend.paramMap["mkFileName"];
     }
-    if(makeProcess->clean(makeExePath,mkFilePath,fileName)){
+    if(makeProcess->clean(makeExePath,mkFileDir,mkFileName)){
         *code = 0;
     }else{
         *code = -1;
