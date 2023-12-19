@@ -24,8 +24,12 @@ void DebugConfigWidget::_on_clicked_debugerSelectBtn()
 {
     QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setWindowTitle(QStringLiteral("选择调试器路径"));
-    fileDialog->setDirectory("D:/c_workstation/compiler/TDM-GCC-64/bin");
+    if(!GlobalData::debugerExePath.isEmpty()){
+        fileDialog->setDirectory(GlobalData::debugerExePath);
+    }
+
     fileDialog->setFileMode(QFileDialog::AnyFile);
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setViewMode(QFileDialog::Detail);
 
     QStringList fileNames;

@@ -54,7 +54,7 @@ void CodeTreeSideWidget::_on_clicked_openDirBtn()
         if(!GlobalData::lastProjectDir.isEmpty()){
             fileDialog->setDirectory(GlobalData::lastProjectDir);
         }
-        fileDialog->setDirectory("D:/c_workstation/projects/vscode-test");
+        fileDialog->setOption(QFileDialog::DontUseNativeDialog);
         fileDialog->setFileMode(QFileDialog::Directory);
         fileDialog->setViewMode(QFileDialog::Detail);
 

@@ -88,10 +88,10 @@ void CodeFileListWidget::_on_openFile(QString path, QString name, QTreeWidgetIte
         }
         file.close();
         listWidget->setCurrentItem(fileInfo->item);
-        emit showFileData(fileInfo->data);
+        //emit showFileData(fileInfo->data);
     }else{
         listWidget->setCurrentItem(targetCodeFile->item);
-        emit showFileData(targetCodeFile->data);
+        //emit showFileData(targetCodeFile->data);
     }
 
 }
@@ -99,28 +99,29 @@ void CodeFileListWidget::_on_openFile(QString path, QString name, QTreeWidgetIte
 // 单击，右键打开菜单；左键显示文件数据
 void CodeFileListWidget::_on_clickedItem(QListWidgetItem *item)
 {
-    if(qApp->mouseButtons() == Qt::LeftButton){
-        for(CodeFileSys::CodeFileInfo* v : GlobalData::codeFileSys->opendCodeFileList){
-            if(v->item == item){
-                emit showFileData(v->data);
-            }
-            break;
-        }
-    }else if(qApp->mouseButtons() == Qt::RightButton){
+    if(qApp->mouseButtons() == Qt::RightButton){
         fileItemMenu->exec(QCursor::pos());
     }
 }
 
 void CodeFileListWidget::_on_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
-    if(previous != nullptr){
-        for(CodeFileSys::CodeFileInfo* v : GlobalData::codeFileSys->opendCodeFileList){
-            if(v->item == previous){
-                emit switchFile(v);
-                break;
-            }
+    CodeFileSys::CodeFileInfo* currentFileInfo = nullptr;
+    CodeFileSys::CodeFileInfo* prevFileInfo = nullptr;
+    int count = 0;
+    for(CodeFileSys::CodeFileInfo* v : GlobalData::codeFileSys->opendCodeFileList){
+        if(count >= 2){
+            break;
+        }
+        if(v->item == previous){
+            prevFileInfo = v;
+            count++;
+        }else if(v->item == current){
+            currentFileInfo = v;
+            count++;
         }
     }
+    emit switchFile(prevFileInfo, currentFileInfo);
 }
 
 void CodeFileListWidget::_on_triggeredMenu(QAction *action)
@@ -156,10 +157,11 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
             item = nullptr;
             if(nearFileInfo != nullptr){
                 listWidget->setCurrentItem(nearFileInfo->item);
-                emit showFileData(nearFileInfo->data);
+                // emit showFileData(nearFileInfo->data);
             }else{
-                QByteArray array;
-                emit showFileData(array);
+                // QByteArray array;
+                // emit showFileData(array);
+                emit switchFile(nullptr, nullptr);
             }
         }
     }else if(text.compare("关闭其他") == 0){
@@ -181,14 +183,14 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
             }
         }
         listWidget->setCurrentItem(item);
-        if(fileInfo != nullptr) emit showFileData(fileInfo->data);
+        if(fileInfo != nullptr) emit switchFile(nullptr, fileInfo);
 
     }else if(text.compare("关闭所有") == 0){
         qDeleteAll(GlobalData::codeFileSys->opendCodeFileList);
         GlobalData::codeFileSys->opendCodeFileList.clear();
         listWidget->clear();
         QByteArray array;
-        emit showFileData(array);
+        emit switchFile(nullptr, nullptr);
     }
 }
 

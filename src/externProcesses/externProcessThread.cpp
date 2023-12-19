@@ -1,6 +1,6 @@
 
 #include "externProcessThread.h"
-#include "../common/global_data.h"
+//#include "../common/global_data.h"
 
 
 ExternProcessThread::ExternProcessThread(QObject *parent)
@@ -40,8 +40,12 @@ void ExternProcessThread::run()
     QString info = "";
     int code = 0;
     bool doflag = false;
+    // 开启生成程序用的cmd窗口
     targetExeCmdProcess->start("cmd.exe");
     targetExeCmdProcess->waitForStarted();
+    targetExeCmdProcess->write("chcp 65001\n");
+    targetExeCmdProcess->waitForBytesWritten();
+
     forever{
         if(this->isInterruptionRequested()){
             break;

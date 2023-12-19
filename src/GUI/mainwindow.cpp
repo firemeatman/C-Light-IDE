@@ -94,8 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     // GUI部件之间的信号连接
     connect(codeTreeSideWidget->getTreeMenu(), &TreeMenu::openFileSignal,
             codeFileListWidget, &CodeFileListWidget::_on_openFile);
-    connect(codeFileListWidget, &CodeFileListWidget::showFileData, codePageEditWidget, &CodePageEditWidget::setTextData);
-    connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::writeContentToCache);
+    connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::_on_switchFile);
     // 外部程序相关信号连接
     connect(GlobalData::ExternProcessThread->getMakeProcess(), &MakeProcess::msgRecved, makeInfoWidget, &MakeInfoWidget::addMsg);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_on_makeCompleted);

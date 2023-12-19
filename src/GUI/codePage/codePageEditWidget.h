@@ -31,9 +31,10 @@ private:
     CodeFileSys::CodeFileInfo* fileInfo = nullptr;
 
 public slots:
-    void setTextData(QByteArray& data);
-    void writeContentToCache(CodeFileSys::CodeFileInfo* fileInfo);
-    void _on_textChanged();
+    void _on_switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo);
+    // void setTextData(QByteArray& data);
+    // void writeContentToCache(CodeFileSys::CodeFileInfo* fileInfo);
+    // void _on_textChanged();
 
 };
 

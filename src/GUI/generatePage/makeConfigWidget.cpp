@@ -35,6 +35,7 @@ void MakeConfigWidget::_on_clicked_complierSelectBtn()
     if(!GlobalData::complierDir.isEmpty()){
         fileDialog->setDirectory(GlobalData::complierDir);
     }
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setViewMode(QFileDialog::Detail);
 
@@ -56,6 +57,7 @@ void MakeConfigWidget::_on_clicked_makeExeSelectBtn()
         QFileInfo fileInfo(GlobalData::makeExePath);
         fileDialog->setDirectory(fileInfo.path());
     }
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(QFileDialog::AnyFile);
     fileDialog->setViewMode(QFileDialog::Detail);
 
@@ -75,6 +77,7 @@ void MakeConfigWidget::_on_clicked_mainMakefileSelectBtn()
     if(!GlobalData::mainMakefileDir.isEmpty()){
         fileDialog->setDirectory(GlobalData::mainMakefileDir);
     }
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(QFileDialog::AnyFile);
     fileDialog->setViewMode(QFileDialog::Detail);
 
@@ -105,6 +108,7 @@ void MakeConfigWidget::_on_clicked_targetExeDirSelectBtn()
         QFileInfo fileInfo(GlobalData::targetExeDir);
         fileDialog->setDirectory(fileInfo.path());
     }
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setViewMode(QFileDialog::Detail);
 

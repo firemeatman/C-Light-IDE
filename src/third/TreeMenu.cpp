@@ -281,7 +281,7 @@ void TreeMenu::bulidNewFileSlot(bool /*flag*/){
     file.close();
     QTreeWidgetItem *child = new QTreeWidgetItem(nowItem);
     child->setText(0,tempName);
-    child->setIcon(0,QIcon("../resource/folder.png"));
+    child->setIcon(0,QIcon("../resource/file.png"));
     child->setToolTip(0,path);
     newFileWidget->close();
 }

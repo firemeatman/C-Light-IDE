@@ -14,7 +14,7 @@ CodeFileSys::~CodeFileSys()
 //        delete v;
 //    }
     qDeleteAll(opendCodeFileList);
-opendCodeFileList.clear();
+    opendCodeFileList.clear();
 }
 
 bool CodeFileSys::saveAllFile()
@@ -29,11 +29,11 @@ bool CodeFileSys::saveAllFile()
                 file.write(v->data);
                 v->isNeedSave = false;
                 QString text = v->item->text();
-                int start = (text.size() - 1) - 3;
+                int start = text.size() - 3;
                 if(start < 0){
                     flag = false;
                 }else{
-                    v->item->setText(text.mid(start));
+                    v->item->setText(text.mid(0, start));
                 }
             }
             file.close();

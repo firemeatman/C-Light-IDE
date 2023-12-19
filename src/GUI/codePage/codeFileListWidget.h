@@ -30,8 +30,8 @@ private:
     int countRepeatNum(QString& name);
 
 signals:
-    void showFileData(QByteArray& data);
-    void switchFile(CodeFileSys::CodeFileInfo* lastFileInfo);
+    //void showFileData(QByteArray& data);
+    void switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo);
 public slots:
     void _on_openFile(QString path,QString name,QTreeWidgetItem *item);
     void _on_clickedItem(QListWidgetItem *item);

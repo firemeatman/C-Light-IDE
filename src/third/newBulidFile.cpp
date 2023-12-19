@@ -10,7 +10,11 @@ NewBulidFile::NewBulidFile(QWidget *parent):QDialog(parent){
     QLabel *fileNameTypeLabel = new QLabel("文件类型", this);
     fileNameEdit = new QLineEdit(this);
     fileNameTypeBox = new QComboBox(this);
-    fileNameTypeBox->addItem(".txt"); //这里可以多加几个Item,方法类似，用于新建文件时指定文件的类型
+    //这里可以多加几个Item,方法类似，用于新建文件时指定文件的类型
+    fileNameTypeBox->addItem(".h");
+    fileNameTypeBox->addItem(".c");
+    fileNameTypeBox->addItem(".txt");
+
     okButton = new QPushButton("确定",this);
     cancalButton = new QPushButton("取消",this);
 

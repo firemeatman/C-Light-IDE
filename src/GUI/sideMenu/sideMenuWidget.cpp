@@ -3,6 +3,7 @@
 #include <QStyle>
 #include <QFile>
 #include <QFileInfo>
+#include <QDockWidget>
 #include "../../common/global_data.h"
 
 SideMenuWidget::SideMenuWidget(QWidget *parent) :
@@ -78,7 +79,10 @@ void SideMenuWidget::_on_clicked_RunBtn()
     commendStr.paramMap = params;
     commendQueue->put(commendStr);
 
-    GlobalData::global_mainWindow->_on_clicked_makeOutBtn();
+    // 弹出make输出信息窗口
+    QDockWidget* makeoutDock = GlobalData::global_mainWindow->getMakeOutdockWidget();
+    GlobalData::global_mainWindow->addDockWidget(Qt::BottomDockWidgetArea,makeoutDock);
+    makeoutDock->show();
 
     RunBtn->setDisabled(true);
 }

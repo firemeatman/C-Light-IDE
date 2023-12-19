@@ -28,7 +28,7 @@ void StartPageWidget::_on_clicked_openBtn()
     if(!GlobalData::lastProjectDir.isEmpty()){
         fileDialog->setDirectory(GlobalData::lastProjectDir);
     }
-
+    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(QFileDialog::Directory);
     fileDialog->setViewMode(QFileDialog::Detail);
 

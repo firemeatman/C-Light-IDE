@@ -2,7 +2,7 @@
 #include "ui_codePageEditWidget.h"
 #include <QGridLayout>
 #include <QFile>
-
+#include <QStringDecoder>
 #include "../../third/QCodeEditor/include/internal/QCodeEditor.hpp"
 #include "../../third/QCodeEditor/include/internal/QSyntaxStyle.hpp"
 #include "../../third/QCodeEditor/include/internal/QCXXHighlighter.hpp"
@@ -24,6 +24,8 @@ CodePageEditWidget::CodePageEditWidget(QWidget *parent) :
     qGridLayout->addWidget(m_codeEditor);
     codeEditor = m_codeEditor;
 
+    codeEditor->setWordWrapMode(QTextOption::NoWrap);
+
     //connect(codeEditor, &QPlainTextEdit::textChanged,this,&CodePageEditWidget::_on_textChanged);
 
 }
@@ -42,30 +44,53 @@ void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 }
 
 
-void CodePageEditWidget::setTextData(QByteArray &data)
-{
-    QString utf8_str = QString::fromLocal8Bit(data);
-    codeEditor->setPlainText(utf8_str);
-}
+// void CodePageEditWidget::setTextData(QByteArray &data)
+// {
+//     QStringDecoder toUtf16(QStringDecoder::Utf8);
+//     QString unicode_str = toUtf16(data);
+//     codeEditor->setPlainText(unicode_str);
+// }
 
-void CodePageEditWidget::writeContentToCache(CodeFileSys::CodeFileInfo *fileInfo)
+// void CodePageEditWidget::writeContentToCache(CodeFileSys::CodeFileInfo *fileInfo)
+// {
+//     QString text = codeEditor->toPlainText();
+//     QByteArray data = text.toUtf8();
+//     if(data.compare(fileInfo->data)){
+//         GlobalData::codeFileSys->updateCache(fileInfo, data);
+//     }
+// }
+
+void CodePageEditWidget::_on_switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo)
 {
-    QString text = codeEditor->toPlainText();
-    QByteArray data = text.toUtf8();
-    if(data.compare(fileInfo->data)){
-        GlobalData::codeFileSys->updateCache(fileInfo, data);
+    // 将上一个文件的内容从编辑器写入缓存
+    if(prevFileInfo != nullptr){
+        QString text = codeEditor->toPlainText();
+        QByteArray data = text.toUtf8();
+        if(data.compare(prevFileInfo->data)){
+            GlobalData::codeFileSys->updateCache(prevFileInfo, data);
+        }
     }
-}
 
-void CodePageEditWidget::_on_textChanged()
-{
-    if(fileInfo == nullptr){
-        return;
+    // 在编辑器上显示当前文件的内容
+    if(nextFileInfo != nullptr){
+        QStringDecoder toUtf16(QStringDecoder::Utf8);
+        QString unicode_str = toUtf16(nextFileInfo->data);
+        codeEditor->setPlainText(unicode_str);
+        QString currentText = codeEditor->toPlainText();
     }
-    QString text = codeEditor->toPlainText();
-    QByteArray data = text.toUtf8();
-    GlobalData::codeFileSys->updateCache(fileInfo, data);
 
 }
+
+
+// void CodePageEditWidget::_on_textChanged()
+// {
+//     if(fileInfo == nullptr){
+//         return;
+//     }
+//     QString text = codeEditor->toPlainText();
+//     QByteArray data = text.toUtf8();
+//     GlobalData::codeFileSys->updateCache(fileInfo, data);
+
+// }
 
 
