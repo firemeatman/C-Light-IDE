@@ -39,58 +39,39 @@ void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_S && event->modifiers() == Qt::CTRL){
         qDebug()<<"ctrl+S";
+        saveData(currentFileInfo);
         GlobalData::codeFileSys->saveAllFile();
     }
 }
 
+void CodePageEditWidget::saveData(CodeFileSys::CodeFileInfo *target)
+{
+    if(target != nullptr){
+        QString text = codeEditor->toPlainText();
+        QByteArray data = text.toUtf8();
+        if(data.compare(target->data)){
+            GlobalData::codeFileSys->updateCache(target, data);
+        }
+    }
+}
 
-// void CodePageEditWidget::setTextData(QByteArray &data)
-// {
-//     QStringDecoder toUtf16(QStringDecoder::Utf8);
-//     QString unicode_str = toUtf16(data);
-//     codeEditor->setPlainText(unicode_str);
-// }
-
-// void CodePageEditWidget::writeContentToCache(CodeFileSys::CodeFileInfo *fileInfo)
-// {
-//     QString text = codeEditor->toPlainText();
-//     QByteArray data = text.toUtf8();
-//     if(data.compare(fileInfo->data)){
-//         GlobalData::codeFileSys->updateCache(fileInfo, data);
-//     }
-// }
 
 void CodePageEditWidget::_on_switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo)
 {
     // 将上一个文件的内容从编辑器写入缓存
-    if(prevFileInfo != nullptr){
-        QString text = codeEditor->toPlainText();
-        QByteArray data = text.toUtf8();
-        if(data.compare(prevFileInfo->data)){
-            GlobalData::codeFileSys->updateCache(prevFileInfo, data);
-        }
-    }
+    saveData(prevFileInfo);
 
     // 在编辑器上显示当前文件的内容
     if(nextFileInfo != nullptr){
         QStringDecoder toUtf16(QStringDecoder::Utf8);
         QString unicode_str = toUtf16(nextFileInfo->data);
         codeEditor->setPlainText(unicode_str);
-        QString currentText = codeEditor->toPlainText();
+        currentFileInfo = nextFileInfo;
+    }else{
+        currentFileInfo = nullptr;
+        codeEditor->setPlainText(QString());
     }
 
 }
-
-
-// void CodePageEditWidget::_on_textChanged()
-// {
-//     if(fileInfo == nullptr){
-//         return;
-//     }
-//     QString text = codeEditor->toPlainText();
-//     QByteArray data = text.toUtf8();
-//     GlobalData::codeFileSys->updateCache(fileInfo, data);
-
-// }
 
 

@@ -22,13 +22,17 @@ public:
 
     QCodeEditor* codeEditor;
 
+    void saveData(CodeFileSys::CodeFileInfo *target);
 
 protected:
     void keyPressEvent(QKeyEvent  *event) override;
 
+
 private:
     Ui::CodePageEditWidget *ui;
-    CodeFileSys::CodeFileInfo* fileInfo = nullptr;
+    CodeFileSys::CodeFileInfo* currentFileInfo = nullptr;
+
+
 
 public slots:
     void _on_switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo);
