@@ -40,12 +40,6 @@ bool MakeProcess::make(QString &makeExePath, QString &mkFileDir, QString &mkFile
    //process->setNativeArguments();  windows平台下用这个。
    process->start(makeExePath,args);
    process->waitForStarted();
-
-   process->waitForReadyRead();
-   QByteArray data = process->readAllStandardOutput();
-   QString utf8_str=QString::fromLocal8Bit(data);
-   emit msgRecved(utf8_str);
-
    process->waitForFinished();
    if(process->exitStatus() == QProcess::NormalExit){
        int exitCode = process->exitCode();

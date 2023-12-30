@@ -8,8 +8,12 @@ ExternProcessThread::ExternProcessThread(QObject *parent)
 {
     makeProcess = new MakeProcess();
     targetExeCmdProcess = new QProcess();
+    cmakeProcess = new CmakeProcess();
+
     makeProcess->moveToThread(this);
     makeProcess->getProcess()->moveToThread(this);
+    cmakeProcess->moveToThread(this);
+    cmakeProcess->getProcess()->moveToThread(this);
     targetExeCmdProcess->moveToThread(this);
 
     commendQueue = new BlockingQueue<CommendStr>();
@@ -27,6 +31,8 @@ ExternProcessThread::~ExternProcessThread()
     delete makeProcess;
     makeProcess = nullptr;
 
+    delete cmakeProcess;
+    cmakeProcess = nullptr;
 
     targetExeCmdProcess->deleteLater();
 
@@ -169,6 +175,16 @@ BlockingQueue<ExternProcessThread::CommendStr> *ExternProcessThread::getCommendQ
 void ExternProcessThread::setCommendQueue(BlockingQueue<ExternProcessThread::CommendStr> *newCommendQueue)
 {
     commendQueue = newCommendQueue;
+}
+
+CmakeProcess *ExternProcessThread::getCmakeProcess() const
+{
+    return cmakeProcess;
+}
+
+void ExternProcessThread::setCmakeProcess(CmakeProcess *newCmakeProcess)
+{
+    cmakeProcess = newCmakeProcess;
 }
 
 

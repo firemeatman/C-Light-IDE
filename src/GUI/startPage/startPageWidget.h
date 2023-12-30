@@ -20,6 +20,7 @@ private:
 
 public slots:
     void _on_clicked_openBtn();
+    void _on_clicked_createBtn();
 };
 
 #endif // STARTPAGEWIDGET_H

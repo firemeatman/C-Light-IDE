@@ -13,6 +13,7 @@ StartPageWidget::StartPageWidget(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->openButton, &QPushButton::clicked, this, &StartPageWidget::_on_clicked_openBtn);
+    connect(ui->createButton, &QPushButton::clicked, this, &StartPageWidget::_on_clicked_createBtn);
 }
 
 StartPageWidget::~StartPageWidget()
@@ -43,4 +44,9 @@ void StartPageWidget::_on_clicked_openBtn()
         treeSideWidget->switchState(CodeTreeSideWidget::OPEN_DIR);
         treeSideWidget->getTreeMenu()->openFileTree(path);
     }
+}
+
+void StartPageWidget::_on_clicked_createBtn()
+{
+
 }

@@ -7,11 +7,12 @@
 #include "../common/projectConfig.h"
 
 
-class ProjectSys
+class ProjectSys : public QObject
 {
     Q_OBJECT
 public:
-    ProjectSys();
+    ProjectSys(QObject *parent = nullptr);
+    ~ProjectSys();
 
     bool createProject(ProjectConfig* project);
     bool loadProject(QString& projectDir, QString projectConfigFilePath = "");

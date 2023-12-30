@@ -7,8 +7,8 @@
 
 #include "common/global_data.h"
 #include "system/codeFileSys.h"
+#include "system/projectSys.h"
 #include "externProcesses/externProcessThread.h"
-#include "common/projectConfig.h"
 
 void init_app();
 void save_data();
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
 void init_app(){
 
-    GlobalData::projectConfig = new ProjectConfig();
+    GlobalData::projectSys = new ProjectSys();
     // 读取配置
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("gengerateSetting");
@@ -80,6 +80,11 @@ void relase_resouse(){
         delete GlobalData::codeFileSys;
         GlobalData::codeFileSys = nullptr;
     }
+    if(GlobalData::projectSys != nullptr){
+        delete GlobalData::projectSys;
+        GlobalData::projectSys = nullptr;
+    }
+
     if(GlobalData::ExternProcessThread != nullptr){
         delete GlobalData::ExternProcessThread;
         GlobalData::ExternProcessThread = nullptr;

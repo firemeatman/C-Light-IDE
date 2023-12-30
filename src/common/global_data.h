@@ -7,6 +7,7 @@
 #include <QMutex>
 #include "../GUI/mainwindow.h"
 #include "../system/codeFileSys.h"
+#include "../system/projectSys.h"
 #include "../externProcesses/externProcessThread.h"
 #include "projectConfig.h"
 class GlobalData{
@@ -17,7 +18,7 @@ public:
     static MainWindow* global_mainWindow;
     static CodeFileSys* codeFileSys;
     static ExternProcessThread* ExternProcessThread;
-    static ProjectConfig* projectConfig;
+    static ProjectSys* projectSys;
 
     static QString complierDir;
     static QString makeExePath;

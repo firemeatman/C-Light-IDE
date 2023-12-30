@@ -4,6 +4,7 @@
 MainWindow* GlobalData::global_mainWindow = nullptr;
 
 CodeFileSys* GlobalData::codeFileSys = nullptr;
+ProjectSys* GlobalData::projectSys = nullptr;
 ExternProcessThread* GlobalData::ExternProcessThread = nullptr;
 
 QString GlobalData::complierDir;

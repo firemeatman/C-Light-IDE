@@ -10,7 +10,19 @@
 QString ProjectSys::projectConfigFileDefaultName = "CLight.project";
 
 
-ProjectSys::ProjectSys() {}
+ProjectSys::ProjectSys(QObject *parent)
+    : QObject{parent}
+{
+
+}
+
+ProjectSys::~ProjectSys()
+{
+    for(ProjectConfig* v : projectConfigList){
+        delete v;
+    }
+    projectConfigList.clear();
+}
 
 bool ProjectSys::createProject(ProjectConfig *project)
 {

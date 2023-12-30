@@ -83,6 +83,7 @@ set(PROJECT_SOURCES
         GUI/commonWidget/terminalWidget.h GUI/commonWidget/terminalWidget.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
+        GUI/commonWidget/createProjectDialog.h GUI/commonWidget/createProjectDialog.cpp GUI/commonWidget/createProjectDialog.ui
         GUI/codePage/codeTreeSideWidget.h GUI/codePage/codeTreeSideWidget.cpp GUI/codePage/codeTreeSideWidget.ui
         GUI/codePage/codeFileListWidget.h GUI/codePage/codeFileListWidget.cpp GUI/codePage/codeFileListWidget.ui
         GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
@@ -98,6 +99,7 @@ set(PROJECT_SOURCES
         externProcesses/makeProcess.h externProcesses/makeProcess.cpp
         externProcesses/debuggerProcess.h externProcesses/debuggerProcess.cpp
         externProcesses/externProcessThread.h externProcesses/externProcessThread.cpp
+        externProcesses/cmakeProcess.h externProcesses/cmakeProcess.cpp
         third/TreeMenu.h
         third/TreeMenu.cpp
         third/newBulidFile.h third/newBulidFile.cpp
@@ -112,6 +114,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(C_Light_IDE
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+
+
 
     )
 # Define target properties for Android with Qt 6 as:

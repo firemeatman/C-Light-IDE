@@ -10,6 +10,7 @@
 #include <QMap>
 #include "debuggerProcess.h"
 #include "makeProcess.h"
+#include "cmakeProcess.h"
 #include "../common/blockingQueue.h"
 
 class ExternProcessThread : public QThread
@@ -36,9 +37,13 @@ public:
     BlockingQueue<ExternProcessThread::CommendStr> *getCommendQueue() const;
     void setCommendQueue(BlockingQueue<ExternProcessThread::CommendStr> *newCommendQueue);
 
+    CmakeProcess *getCmakeProcess() const;
+    void setCmakeProcess(CmakeProcess *newCmakeProcess);
+
 private:
     DebuggerProcess* debuggerProcess = nullptr;
     MakeProcess* makeProcess = nullptr;
+    CmakeProcess* cmakeProcess = nullptr;
     QProcess* targetExeCmdProcess = nullptr;
     BlockingQueue<ExternProcessThread::CommendStr>* commendQueue;
 
