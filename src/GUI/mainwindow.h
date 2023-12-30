@@ -9,11 +9,13 @@ class SideMenuWidget;
 class StartPageWidget;
 class CodePageEditWidget;
 class CodeTreeSideWidget;
-class GenerateSideMenu;
-class MakeConfigWidget;
-class DebugConfigWidget;
-
 class CodeFileListWidget;
+
+class ProjectConfigSideMenu;
+class ProjectConfigWidget;
+class GenBuildConfigWidget;
+class debugConfigWidget;
+
 class MakeInfoWidget;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -43,9 +45,12 @@ public:
     QPushButton *getMakeOutBtn() const;
 
     QDockWidget *getGenerateSideMenuDockWidget() const;
-    GenerateSideMenu *getGenerateSideMenuWidget() const;
-    MakeConfigWidget *getMakeConfigWidget() const;
-    DebugConfigWidget *getDebugConfigWidget() const;
+
+    QDockWidget *getProjectConfigSideMenuDockWidget() const;
+    ProjectConfigSideMenu *getProjectConfigSideMenu() const;
+    ProjectConfigWidget *getProjectConfigWidget() const;
+    GenBuildConfigWidget *getGenBuildConfigWidget() const;
+    debugConfigWidget *getDebugConfigWidget() const;
 
 private:
     Ui::MainWindow *ui;
@@ -53,7 +58,7 @@ private:
     QDockWidget* codeTreeSidedockWidget;
     QDockWidget* makeOutdockWidget;
     QDockWidget* codeFileListdockWidget;
-    QDockWidget* generateSideMenuDockWidget;
+    QDockWidget* projectConfigSideMenuDockWidget;
 
     SideMenuWidget* sideMenuWidget;
     StartPageWidget* startPageWidget;
@@ -61,9 +66,11 @@ private:
     CodeTreeSideWidget* codeTreeSideWidget;
     CodeFileListWidget* codeFileListWidget;
     MakeInfoWidget* makeInfoWidget = nullptr;
-    GenerateSideMenu* generateSideMenuWidget;
-    MakeConfigWidget* makeConfigWidget;
-    DebugConfigWidget* debugConfigWidget;
+
+    ProjectConfigSideMenu* projectConfigSideMenu;
+    ProjectConfigWidget* projectConfigWidget;
+    GenBuildConfigWidget* genBuildConfigWidget;
+    debugConfigWidget* _debugConfigWidget;
 
     QPushButton* programOutBtn;
     QPushButton* makeOutBtn;
@@ -73,7 +80,7 @@ private:
 public slots:
     void _on_clicked_StartBtn();
     void _on_clicked_CodeBtn();
-    void _on_clicked_GenerateBtn();
+    void _on_clicked_ConfigBtn();
 
     void _on_clicked_programOutBtn();
     void _on_clicked_makeOutBtn();

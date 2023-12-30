@@ -6,12 +6,9 @@
 #include <QString>
 #include <QMutex>
 #include "../GUI/mainwindow.h"
-#include "../codeFileSys/codeFileSys.h"
+#include "../system/codeFileSys.h"
 #include "../externProcesses/externProcessThread.h"
-//class MainWindow;
-//class TerminalWidget;
-//class TerminalSysteam;
-
+#include "projectConfig.h"
 class GlobalData{
 public:
 
@@ -20,6 +17,7 @@ public:
     static MainWindow* global_mainWindow;
     static CodeFileSys* codeFileSys;
     static ExternProcessThread* ExternProcessThread;
+    static ProjectConfig* projectConfig;
 
     static QString complierDir;
     static QString makeExePath;

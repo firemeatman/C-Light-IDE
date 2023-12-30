@@ -17,7 +17,7 @@ public:
 
     QToolButton* StartBtn;
     QToolButton* CodeBtn;
-    QToolButton* GenerateBtn;
+    QToolButton* ConfigBtn;
     QToolButton* RunBtn;
 
 private:

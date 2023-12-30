@@ -6,8 +6,9 @@
 #include <QMetaType>
 
 #include "common/global_data.h"
-#include "codeFileSys/codeFileSys.h"
+#include "system/codeFileSys.h"
 #include "externProcesses/externProcessThread.h"
+#include "common/projectConfig.h"
 
 void init_app();
 void save_data();
@@ -30,6 +31,7 @@ int main(int argc, char *argv[])
 
 void init_app(){
 
+    GlobalData::projectConfig = new ProjectConfig();
     // 读取配置
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("gengerateSetting");

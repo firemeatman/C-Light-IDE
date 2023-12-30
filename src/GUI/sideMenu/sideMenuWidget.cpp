@@ -36,11 +36,11 @@ SideMenuWidget::SideMenuWidget(QWidget *parent) :
     CodeBtn = ui->toolButton_2;
 
     ui->toolButton_4->setIcon(QIcon("../resource/complier_settings_icon_512px.png"));
-    ui->toolButton_4->setText("编译构建");
+    ui->toolButton_4->setText("项目设置");
     ui->toolButton_4->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui->toolButton_4->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
     //ui->toolButton->setIconSize(QSize(256,256));
-    GenerateBtn = ui->toolButton_4;
+    ConfigBtn = ui->toolButton_4;
 
     ui->toolButton_5->setIcon(QIcon("../resource/play_regular_icon_512px.png"));
     ui->toolButton_5->setText("运行");

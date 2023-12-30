@@ -14,9 +14,10 @@
 #include "codePage/codePageEditWidget.h"
 #include "codePage/codeTreeSideWidget.h"
 #include "codePage/codeFileListWidget.h"
-#include "generatePage/generateSideMenu.h"
-#include "generatePage/makeConfigWidget.h"
-#include "generatePage/debugConfigWidget.h"
+#include "projectConfigPage/projectConfigSideMenu.h"
+#include "projectConfigPage/projectConfigWidget.h"
+#include "projectConfigPage/genBuildConfigWidget.h"
+#include "projectConfigPage/debugConfigWidget.h"
 #include "infoWindow/makeInfoWidget.h"
 
 
@@ -35,20 +36,25 @@ MainWindow::MainWindow(QWidget *parent)
     this->addToolBar(Qt::LeftToolBarArea, toolBar);
 
     // 初始化主要窗口
+    // ---开始窗口
     startPageWidget = new StartPageWidget(this);
+    // ---代码窗口
     codePageEditWidget = new CodePageEditWidget(this);
     codeTreeSideWidget = new CodeTreeSideWidget(this);
     codeFileListWidget = new CodeFileListWidget(this);
-    generateSideMenuWidget = new GenerateSideMenu(this);
-    makeConfigWidget = new MakeConfigWidget(this);
-    debugConfigWidget = new DebugConfigWidget(this);
+    // ---配置窗口
+    projectConfigSideMenu = new ProjectConfigSideMenu(this);
+    projectConfigWidget = new ProjectConfigWidget(this);
+    genBuildConfigWidget = new GenBuildConfigWidget(this);
+    _debugConfigWidget = new debugConfigWidget(this);
+    // ---信息窗口
     makeInfoWidget = new MakeInfoWidget(this);
 
     // 初始化dockwidget
     codeTreeSidedockWidget = new QDockWidget(this);
     makeOutdockWidget = new QDockWidget(this);
     codeFileListdockWidget = new QDockWidget(this);
-    generateSideMenuDockWidget = new QDockWidget(this);
+    projectConfigSideMenuDockWidget = new QDockWidget(this);
 
     codeTreeSidedockWidget->setWidget(codeTreeSideWidget);
     codeTreeSidedockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -57,16 +63,17 @@ MainWindow::MainWindow(QWidget *parent)
     //makeOutdockWidget->setTitleBarWidget(new QWidget(makeOutdockWidget));
     codeFileListdockWidget->setWidget(codeFileListWidget);
     codeFileListdockWidget->setFloating(false);
-    generateSideMenuDockWidget->setWidget(generateSideMenuWidget);
-    generateSideMenuDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    projectConfigSideMenuDockWidget->setWidget(projectConfigSideMenu);
+    projectConfigSideMenuDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
 
     codePageEditWidget->hide();
-    makeConfigWidget->hide();
-    debugConfigWidget->hide();
+    projectConfigWidget->hide();
+    genBuildConfigWidget->hide();
+    _debugConfigWidget->hide();
     codeTreeSidedockWidget->hide();
     codeFileListdockWidget->hide();
     makeOutdockWidget->hide();
-    generateSideMenuDockWidget->hide();
+    projectConfigSideMenuDockWidget->hide();
 
     // 设置主窗口、dock窗口设置
     this->setCentralWidget(startPageWidget);
@@ -88,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent)
     // 主窗口整体信号连接
     connect(sideMenuWidget->StartBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_StartBtn);
     connect(sideMenuWidget->CodeBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_CodeBtn);
-    connect(sideMenuWidget->GenerateBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_GenerateBtn);
+    connect(sideMenuWidget->ConfigBtn , &QToolButton::clicked, this, &MainWindow::_on_clicked_ConfigBtn);
     connect(this->makeOutBtn, &QPushButton::clicked, this, &MainWindow::_on_clicked_makeOutBtn);
 
     // GUI部件之间的信号连接
@@ -163,25 +170,31 @@ QPushButton *MainWindow::getMakeOutBtn() const
     return makeOutBtn;
 }
 
-QDockWidget *MainWindow::getGenerateSideMenuDockWidget() const
+QDockWidget *MainWindow::getProjectConfigSideMenuDockWidget() const
 {
-    return generateSideMenuDockWidget;
+    return projectConfigSideMenuDockWidget;
 }
 
-GenerateSideMenu *MainWindow::getGenerateSideMenuWidget() const
+ProjectConfigSideMenu *MainWindow::getProjectConfigSideMenu() const
 {
-    return generateSideMenuWidget;
+    return projectConfigSideMenu;
 }
 
-MakeConfigWidget *MainWindow::getMakeConfigWidget() const
+ProjectConfigWidget *MainWindow::getProjectConfigWidget() const
 {
-    return makeConfigWidget;
+    return projectConfigWidget;
 }
 
-DebugConfigWidget *MainWindow::getDebugConfigWidget() const
+GenBuildConfigWidget *MainWindow::getGenBuildConfigWidget() const
 {
-    return debugConfigWidget;
+    return genBuildConfigWidget;
 }
+
+debugConfigWidget *MainWindow::getDebugConfigWidget() const
+{
+    return _debugConfigWidget;
+}
+
 
 
 
@@ -199,8 +212,8 @@ void MainWindow::_on_clicked_StartBtn()
     if(codeFileListdockWidget != nullptr){
         this->removeDockWidget(codeFileListdockWidget);
     }
-    if(generateSideMenuDockWidget != nullptr){
-        this->removeDockWidget(generateSideMenuDockWidget);
+    if(projectConfigSideMenuDockWidget != nullptr){
+        this->removeDockWidget(projectConfigSideMenuDockWidget);
     }
 }
 
@@ -208,8 +221,8 @@ void MainWindow::_on_clicked_CodeBtn()
 {
     this->takeCentralWidget();
     this->setCentralWidget(codePageEditWidget);
-    if(generateSideMenuDockWidget != nullptr){
-        this->removeDockWidget(generateSideMenuDockWidget);
+    if(projectConfigSideMenuDockWidget != nullptr){
+        this->removeDockWidget(projectConfigSideMenuDockWidget);
     }
     this->addDockWidget(Qt::LeftDockWidgetArea, codeTreeSidedockWidget);
     this->splitDockWidget(codeTreeSidedockWidget,codeFileListdockWidget,Qt::Horizontal);
@@ -220,20 +233,20 @@ void MainWindow::_on_clicked_CodeBtn()
 
 }
 
-void MainWindow::_on_clicked_GenerateBtn()
+void MainWindow::_on_clicked_ConfigBtn()
 {
     this->takeCentralWidget();
-    this->setCentralWidget(makeConfigWidget);
+    this->setCentralWidget(projectConfigWidget);
     if(codeTreeSidedockWidget != nullptr){
         this->removeDockWidget(codeTreeSidedockWidget);
     }
     if(codeFileListdockWidget != nullptr){
         this->removeDockWidget(codeFileListdockWidget);
     }
-    this->addDockWidget(Qt::LeftDockWidgetArea, generateSideMenuDockWidget);
+    this->addDockWidget(Qt::LeftDockWidgetArea, projectConfigSideMenuDockWidget);
 
-    makeConfigWidget->show();
-    generateSideMenuDockWidget->show();
+    projectConfigWidget->show();
+    projectConfigSideMenuDockWidget->show();
 
 }
 

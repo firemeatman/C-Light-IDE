@@ -78,6 +78,8 @@ set(PROJECT_SOURCES
         common/forceAccess.h common/forceAccess.cpp
         common/global_data.h common/global_data.cpp
         common/blockingQueue.h
+        common/projectConfig.h common/projectConfig.cpp
+        common/usefulTool.h common/usefulTool.cpp
         GUI/commonWidget/terminalWidget.h GUI/commonWidget/terminalWidget.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
         GUI/commonWidget/editorSideArea.h GUI/commonWidget/editorSideArea.cpp
@@ -86,13 +88,13 @@ set(PROJECT_SOURCES
         GUI/codePage/codePageEditWidget.h GUI/codePage/codePageEditWidget.cpp GUI/codePage/codePageEditWidget.ui
         GUI/sideMenu/sideMenuWidget.h GUI/sideMenu/sideMenuWidget.cpp GUI/sideMenu/sideMenuWidget.ui
         GUI/startPage/startPageWidget.h GUI/startPage/startPageWidget.cpp GUI/startPage/startPageWidget.ui
-        GUI/generatePage/makeConfigWidget.h GUI/generatePage/makeConfigWidget.cpp GUI/generatePage/makeConfigWidget.ui
-        GUI/generatePage/generateSideMenu.h GUI/generatePage/generateSideMenu.cpp GUI/generatePage/generateSideMenu.ui
-        GUI/generatePage/debugConfigWidget.h GUI/generatePage/debugConfigWidget.cpp GUI/generatePage/debugConfigWidget.ui
+        GUI/projectConfigPage/projectConfigSideMenu.h GUI/projectConfigPage/projectConfigSideMenu.cpp GUI/projectConfigPage/projectConfigSideMenu.ui
+        GUI/projectConfigPage/projectConfigWidget.h GUI/projectConfigPage/projectConfigWidget.cpp GUI/projectConfigPage/projectConfigWidget.ui
+        GUI/projectConfigPage/genBuildConfigWidget.h GUI/projectConfigPage/genBuildConfigWidget.cpp GUI/projectConfigPage/genBuildConfigWidget.ui
+        GUI/projectConfigPage/debugConfigWidget.h GUI/projectConfigPage/debugConfigWidget.cpp GUI/projectConfigPage/debugConfigWidget.ui
         GUI/infoWindow/makeInfoWidget.h GUI/infoWindow/makeInfoWidget.cpp GUI/infoWindow/makeInfoWidget.ui
-        terminalSys/terminalSysteam.h terminalSys/terminalSysteam.cpp
-        terminalSys/terminalThread.h terminalSys/terminalThread.cpp
-        codeFileSys/codeFileSys.h codeFileSys/codeFileSys.cpp
+        system/codeFileSys.h system/codeFileSys.cpp
+        system/projectSys.h system/projectSys.cpp
         externProcesses/makeProcess.h externProcesses/makeProcess.cpp
         externProcesses/debuggerProcess.h externProcesses/debuggerProcess.cpp
         externProcesses/externProcessThread.h externProcesses/externProcessThread.cpp
@@ -110,6 +112,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(C_Light_IDE
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET C_Light_IDE APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
