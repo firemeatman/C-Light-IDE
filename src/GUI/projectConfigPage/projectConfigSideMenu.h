@@ -17,6 +17,11 @@ public:
 
 private:
     Ui::ProjectConfigSideMenu *ui;
+
+public slots:
+    void _on_clicked_projectConfigBtn();
+    void _on_clicked_genBuildConfigBtn();
+    void _on_clicked_debugConfigBtn();
 };
 
 #endif // PROJECTCONFIGSIDEMENU_H

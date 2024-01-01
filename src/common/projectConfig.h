@@ -24,16 +24,17 @@ class DebugConfig
 public:
     DebugConfig();
 
-    QString debugerPath;
-    Debuger_Type type;
+    QString debugerPath = "";
+    Debuger_Type type = Debuger_Type::GDB;
 };
 
 class GenerateBuildConfig
 {
 public:
     GenerateBuildConfig();
-    QString c_ComplierPath;
-    QString cxx_ComplierPath;
+
+    QString c_ComplierPath = "";
+    QString cxx_ComplierPath = "";
 };
 
 class CMakeSysConfig : public GenerateBuildConfig
@@ -41,20 +42,21 @@ class CMakeSysConfig : public GenerateBuildConfig
 public:
     CMakeSysConfig();
 
-    QString CMakePath;
-    QString CMakeFilePath;
-    QString buildDir;
-    QString installDir;
-    Buildsystem_Type buildsystem;
-    QString buildsystemPath;
+    QString CMakePath = "";
+    QString CMakeFilePath = "";
+    QString buildDir = "";
+    QString installDir = "";
+    Buildsystem_Type buildsystem = Buildsystem_Type::Ninja;
+    QString buildsystemPath = "";
 };
 
 class MakeSysConfig : public GenerateBuildConfig
 {
 public:
     MakeSysConfig();
-    QString makePath;
-    QString makeFilePath;
+
+    QString makePath = "";
+    QString makeFilePath = "";
 };
 
 class StateConfig{
@@ -88,13 +90,14 @@ class ProjectConfig
 public:
     ProjectConfig();
 
-    QString projectName;
-    QString projectRootDir;
-    Project_Type projectType;
-    QString ConfigFilePath;
+    QString projectName = "";
+    QString projectRootDir = "";
+    Project_Type projectType = Project_Type::CMAKE_PROJECT;
+    QString ConfigFilePath = "";
 
     StateConfig stateConfig;
-    GenerateBuildConfig generateBuildConfig;
+    CMakeSysConfig cmakeConfig;
+    MakeSysConfig makeSysConfig;
     DebugConfig debugConfig;
 };
 #endif // PROJECTCONFIG_H

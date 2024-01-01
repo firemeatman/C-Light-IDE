@@ -3,10 +3,12 @@
 
 #include <QPushButton>
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "../codePage/codeTreeSideWidget.h"
 #include "../../common/global_data.h"
-
+#include "../../common/usefulTool.h"
+#include "../commonWidget/createProjectDialog.h"
 StartPageWidget::StartPageWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::StartPageWidget)
@@ -23,30 +25,73 @@ StartPageWidget::~StartPageWidget()
 
 void StartPageWidget::_on_clicked_openBtn()
 {
-    //定义文件对话框类
-    QFileDialog *fileDialog = new QFileDialog(this);
-    fileDialog->setWindowTitle(QStringLiteral("选择项目文件夹"));
+    QStringList fileList;
+    QString fileDialogDir;
     if(!GlobalData::lastProjectDir.isEmpty()){
-        fileDialog->setDirectory(GlobalData::lastProjectDir);
+        fileDialogDir = GlobalData::lastProjectDir;
     }
-    fileDialog->setOption(QFileDialog::DontUseNativeDialog);
-    fileDialog->setFileMode(QFileDialog::Directory);
-    fileDialog->setViewMode(QFileDialog::Detail);
-
-    //打开文件目录，跳转编码页面
-    QStringList fileNames;
-    if (fileDialog->exec()) {
-        fileNames = fileDialog->selectedFiles();
-        QString path = fileNames.at(0);
+    QString name = QStringLiteral("选择项目文件夹");
+    fileList = UsefulTool::userSelectFile(name, QFileDialog::Directory, fileDialogDir, this);
+    if(!fileList.isEmpty()){
+        QString path = fileList.at(0);
         GlobalData::lastProjectDir = path;
+        // 打开项目
+        GlobalData::projectSys->loadProject(path);
+        //跳转编码页面
         GlobalData::global_mainWindow->_on_clicked_CodeBtn();
         CodeTreeSideWidget* treeSideWidget = GlobalData::global_mainWindow->getCodeTreeSideWidget();
         treeSideWidget->switchState(CodeTreeSideWidget::OPEN_DIR);
         treeSideWidget->getTreeMenu()->openFileTree(path);
     }
+
 }
 
 void StartPageWidget::_on_clicked_createBtn()
 {
+    if(createProjectDialog != nullptr){
+        return;
+    }
+    createProjectDialog = new CreateProjectDialog(this);
+    connect(createProjectDialog, &CreateProjectDialog::accepted, this, &StartPageWidget::_on_acceptCreate);
+    connect(createProjectDialog, &CreateProjectDialog::rejected, this, &StartPageWidget::_on_rejecptCreate);
+    createProjectDialog->exec();
+}
 
+void StartPageWidget::_on_acceptCreate()
+{
+    QString errMsg;
+    CreateProjectDialog::Back_Params backParams;
+    bool flag = true;
+    ProjectConfig* project = nullptr;
+
+    createProjectDialog->getBack_Params(&backParams);
+    if(backParams.projetName.isEmpty()){
+        errMsg = "工程名是空的...";
+        goto err_1;
+    }
+    if(backParams.root.isEmpty()){
+        errMsg = "根目录是空的...";
+        goto err_1;
+    }
+
+    // 创建工程
+    flag = GlobalData::projectSys->createProject(backParams.projetName,backParams.root,backParams.type,project);
+    if(!flag){
+        errMsg = "创建项目配置失败!";
+        goto err_1;
+    }
+    createProjectDialog->close();
+    createProjectDialog = nullptr;
+    return;
+
+    err_1:
+    QMessageBox msgBox;
+    msgBox.setText(errMsg);
+    msgBox.exec();
+}
+
+void StartPageWidget::_on_rejecptCreate()
+{
+    createProjectDialog->close();
+    createProjectDialog = nullptr;
 }

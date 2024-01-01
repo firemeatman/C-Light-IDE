@@ -19,7 +19,7 @@ CMakeSysConfig::CMakeSysConfig()
 
 }
 
-makeSysConfig::makeSysConfig()
+MakeSysConfig::MakeSysConfig()
 {
 
 }

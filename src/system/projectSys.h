@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+
 #include "../common/projectConfig.h"
 
 
@@ -15,6 +16,7 @@ public:
     ~ProjectSys();
 
     bool createProject(ProjectConfig* project);
+    bool createProject(QString& name, QString& rootDir, Project_Type type, ProjectConfig* project);
     bool loadProject(QString& projectDir, QString projectConfigFilePath = "");
     bool openProject(ProjectConfig* project);
     bool closeProject(ProjectConfig* project);
@@ -33,6 +35,7 @@ private:
     ProjectConfig* currentProject = nullptr;
 
     static QString projectConfigFileDefaultName;
+    static QString CmakeListTemplate;
 
     bool parseConfig(QByteArray& data, ProjectConfig* projectConfig);
     bool saveProject(ProjectConfig* project);

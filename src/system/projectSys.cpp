@@ -1,14 +1,28 @@
 #include "projectSys.h"
 
 #include <QFile>
+#include <QDir>
 
 #include <QJsonDocument>
 #include <QJsonParseError>
 #include <QJsonObject>
 #include <QJsonArray>
 
-QString ProjectSys::projectConfigFileDefaultName = "CLight.project";
+#include "../common/projectConfig.h"
 
+QString ProjectSys::projectConfigFileDefaultName = "CLight_Project.json";
+QString ProjectSys::CmakeListTemplate = "cmake_minimum_required (VERSION 3.8)\n\
+project (\"test\" C)\n\
+# 启动对C11标准的支持\n\
+# set(CMAKE_C_STANDARD 11)\n\
+# 显式要求指明支持C标准\n\
+# set(CMAKE_C_STANDARD_REQUIRED True)\n\
+#设置c的编译选项\n\
+set (CMAKE_C_FLAGS \"${CMAKE_C_FLAGS} -std=c11\")\n\
+# 将源代码添加到此项目的可执行文件。\n\
+add_executable (${PROJECT_NAME}\n\
+                   src/main.c src/math/my_math.c src/math/my_math.h\n\
+                   )";
 
 ProjectSys::ProjectSys(QObject *parent)
     : QObject{parent}
@@ -36,6 +50,59 @@ bool ProjectSys::createProject(ProjectConfig *project)
     emit projectLoaded(currentProject);
 
     return true;
+}
+
+bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type type, ProjectConfig *project)
+{
+    project = new ProjectConfig();
+    project->projectName = name;
+    project->projectType = type;
+    project->projectRootDir = rootDir;
+
+    // 创建项目配置文件
+    QDir nativeRootDir(rootDir);
+    QString configFilePath = nativeRootDir.absoluteFilePath(ProjectSys::projectConfigFileDefaultName);
+    QFile configFile(configFilePath);
+    if (!configFile.open(QIODevice::WriteOnly)){
+        if(project == nullptr){
+            delete project;
+        }
+        return false;
+    }
+    configFile.close();
+
+    // 创建根据项目类型创建构建所需的文件
+    QString buildFilePath;
+    QString outStr;
+    if(project->projectType == Project_Type::CMAKE_PROJECT){
+        buildFilePath = nativeRootDir.absoluteFilePath("CMakeLists.txt");
+        outStr = ProjectSys::CmakeListTemplate;
+    }else if(project->projectType == Project_Type::MAKEFILE_PROJECT){
+        buildFilePath = nativeRootDir.absoluteFilePath("makefile");
+        outStr = ProjectSys::CmakeListTemplate;
+    }
+
+    QFile buildFile(buildFilePath);
+    if (!buildFile.open(QIODevice::WriteOnly | QIODevice::Text)){
+        if(project == nullptr){
+            delete project;
+        }
+        return false;
+    }
+    QTextStream textOut(&buildFile);
+    textOut << outStr;
+    buildFile.close();
+
+    // 保存一次项目配置，打开项目，并存入系统管理
+    saveProject(project);
+    project->stateConfig.isOpen = true;
+    projectConfigList.append(project);
+    currentProject = project;
+
+    emit projectLoaded(currentProject);
+    return true;
+
+
 }
 
 bool ProjectSys::loadProject(QString& projectDir, QString projectConfigFilePath)
@@ -161,7 +228,7 @@ bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
             cmakeSysConfig.buildsystem = (Buildsystem_Type)cMakeSysConfigJObject["buildsystem"].toInt();
             cmakeSysConfig.buildsystemPath = cMakeSysConfigJObject["buildsystemPath"].toString();
 
-            projectConfig->generateBuildConfig = cmakeSysConfig;
+            projectConfig->cmakeConfig = cmakeSysConfig;
         }
     }else if(projectConfig->projectType == Project_Type::MAKEFILE_PROJECT){
         QJsonObject makeSysConfigJObject = jroot["makeSysConfig"].toObject();
@@ -172,7 +239,7 @@ bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
             makeSysConfig.makePath = makeSysConfigJObject["CMakeFilePath"].toString();
             makeSysConfig.makeFilePath = makeSysConfigJObject["makeFilePath"].toString();
 
-            projectConfig->generateBuildConfig = makeSysConfig;
+            projectConfig->makeSysConfig = makeSysConfig;
         }
     }
     // ----调试配置
@@ -203,21 +270,21 @@ bool ProjectSys::saveProject(ProjectConfig *project)
     projectJsonObject.insert("projectType", project->projectType);
     projectJsonObject.insert("ConfigFilePath", project->ConfigFilePath);
 
-    genbuildJsonObject.insert("c_ComplierPath", project->generateBuildConfig.c_ComplierPath);
-    genbuildJsonObject.insert("cxx_ComplierPath", project->generateBuildConfig.cxx_ComplierPath);
     if(project->projectType == Project_Type::CMAKE_PROJECT){
-        CMakeSysConfig* cMakeSysConfig = static_cast<CMakeSysConfig*>(&(project->generateBuildConfig));
-        genbuildJsonObject.insert("CMakePath", cMakeSysConfig->CMakePath);
-        genbuildJsonObject.insert("CMakeFilePath", cMakeSysConfig->CMakeFilePath);
-        genbuildJsonObject.insert("buildsystemPath", cMakeSysConfig->buildsystemPath);
-        genbuildJsonObject.insert("buildsystem", cMakeSysConfig->buildsystem);
-        genbuildJsonObject.insert("buildDir", cMakeSysConfig->buildDir);
-        genbuildJsonObject.insert("installDir", cMakeSysConfig->installDir);
+        CMakeSysConfig& cMakeSysConfig = project->cmakeConfig;
+        genbuildJsonObject.insert("c_ComplierPath", cMakeSysConfig.c_ComplierPath);
+        genbuildJsonObject.insert("cxx_ComplierPath", cMakeSysConfig.cxx_ComplierPath);
+        genbuildJsonObject.insert("CMakePath", cMakeSysConfig.CMakePath);
+        genbuildJsonObject.insert("CMakeFilePath", cMakeSysConfig.CMakeFilePath);
+        genbuildJsonObject.insert("buildsystemPath", cMakeSysConfig.buildsystemPath);
+        genbuildJsonObject.insert("buildsystem", cMakeSysConfig.buildsystem);
+        genbuildJsonObject.insert("buildDir", cMakeSysConfig.buildDir);
+        genbuildJsonObject.insert("installDir", cMakeSysConfig.installDir);
         projectJsonObject.insert("cMakeSysConfig", QJsonValue(genbuildJsonObject));
     }else if(project->projectType == Project_Type::MAKEFILE_PROJECT){
-        MakeSysConfig* makeSysConfig = static_cast<MakeSysConfig*>(&(project->generateBuildConfig));
-        genbuildJsonObject.insert("makePath", makeSysConfig->makePath);
-        genbuildJsonObject.insert("makeFilePath", makeSysConfig->makeFilePath);
+        MakeSysConfig& makeSysConfig = project->makeSysConfig;
+        genbuildJsonObject.insert("makePath", makeSysConfig.makePath);
+        genbuildJsonObject.insert("makeFilePath", makeSysConfig.makeFilePath);
         projectJsonObject.insert("makeSysConfig", QJsonValue(genbuildJsonObject));
     }
 
