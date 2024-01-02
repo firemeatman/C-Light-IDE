@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QString>
 
-#include "../../common/projectConfig.h"
+#include "../../system/projectConfig.h"
 namespace Ui {
 class CreateProjectDialog;
 }

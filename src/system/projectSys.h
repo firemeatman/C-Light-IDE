@@ -5,7 +5,7 @@
 #include <QList>
 #include <QString>
 
-#include "../common/projectConfig.h"
+#include "projectConfig.h"
 
 
 class ProjectSys : public QObject

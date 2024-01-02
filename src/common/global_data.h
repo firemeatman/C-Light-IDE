@@ -9,7 +9,6 @@
 #include "../system/codeFileSys.h"
 #include "../system/projectSys.h"
 #include "../externProcesses/externProcessThread.h"
-#include "projectConfig.h"
 class GlobalData{
 public:
 

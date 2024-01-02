@@ -78,7 +78,6 @@ set(PROJECT_SOURCES
         common/forceAccess.h common/forceAccess.cpp
         common/global_data.h common/global_data.cpp
         common/blockingQueue.h
-        common/projectConfig.h common/projectConfig.cpp
         common/usefulTool.h common/usefulTool.cpp
         GUI/commonWidget/terminalWidget.h GUI/commonWidget/terminalWidget.cpp
         GUI/commonWidget/codeEditor.h GUI/commonWidget/codeEditor.cpp
@@ -96,6 +95,7 @@ set(PROJECT_SOURCES
         GUI/infoWindow/makeInfoWidget.h GUI/infoWindow/makeInfoWidget.cpp GUI/infoWindow/makeInfoWidget.ui
         system/codeFileSys.h system/codeFileSys.cpp
         system/projectSys.h system/projectSys.cpp
+        system/projectConfig.h system/projectConfig.cpp
         externProcesses/makeProcess.h externProcesses/makeProcess.cpp
         externProcesses/debuggerProcess.h externProcesses/debuggerProcess.cpp
         externProcesses/externProcessThread.h externProcesses/externProcessThread.cpp

@@ -2,7 +2,7 @@
 #define GENBUILDCONFIGWIDGET_H
 
 #include <QWidget>
-
+#include "../../system/projectConfig.h"
 namespace Ui {
 class GenBuildConfigWidget;
 }
@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::GenBuildConfigWidget *ui;
+public slots:
+    void projectLoaded(ProjectConfig* newProject);
 };
 
 #endif // GENBUILDCONFIGWIDGET_H

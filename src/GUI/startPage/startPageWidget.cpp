@@ -59,6 +59,9 @@ void StartPageWidget::_on_clicked_createBtn()
 
 void StartPageWidget::_on_acceptCreate()
 {
+    static int count = 0;
+    count++;
+    qDebug()<<"accept次数："<<count;
     QString errMsg;
     CreateProjectDialog::Back_Params backParams;
     bool flag = true;

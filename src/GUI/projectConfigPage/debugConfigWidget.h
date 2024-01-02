@@ -2,7 +2,7 @@
 #define DEBUGCONFIGWIDGET_H
 
 #include <QWidget>
-
+#include "../../system/projectConfig.h"
 namespace Ui {
 class debugConfigWidget;
 }
@@ -17,6 +17,8 @@ public:
 
 private:
     Ui::debugConfigWidget *ui;
+public slots:
+    void projectLoaded(ProjectConfig* newProject);
 };
 
 #endif // DEBUGCONFIGWIDGET_H

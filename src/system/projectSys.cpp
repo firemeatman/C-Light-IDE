@@ -8,7 +8,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 
-#include "../common/projectConfig.h"
+
 
 QString ProjectSys::projectConfigFileDefaultName = "CLight_Project.json";
 QString ProjectSys::CmakeListTemplate = "cmake_minimum_required (VERSION 3.8)\n\
@@ -69,6 +69,7 @@ bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type typ
         }
         return false;
     }
+    project->ConfigFilePath = configFilePath;
     configFile.close();
 
     // 创建根据项目类型创建构建所需的文件
@@ -94,7 +95,12 @@ bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type typ
     buildFile.close();
 
     // 保存一次项目配置，打开项目，并存入系统管理
-    saveProject(project);
+    if(!saveProject(project)){
+        if(project == nullptr){
+            delete project;
+        }
+        return false;
+    }
     project->stateConfig.isOpen = true;
     projectConfigList.append(project);
     currentProject = project;
@@ -218,9 +224,9 @@ bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
         QJsonObject cMakeSysConfigJObject = jroot["cMakeSysConfig"].toObject();
         if(!cMakeSysConfigJObject.isEmpty()){
             CMakeSysConfig cmakeSysConfig;
-
             cmakeSysConfig.c_ComplierPath = cMakeSysConfigJObject["c_ComplierPath"].toString();
             cmakeSysConfig.cxx_ComplierPath = cMakeSysConfigJObject["cxx_ComplierPath"].toString();
+            cmakeSysConfig.targetName = cMakeSysConfigJObject["targetName"].toString();
             cmakeSysConfig.CMakePath = cMakeSysConfigJObject["CMakePath"].toString();
             cmakeSysConfig.CMakeFilePath = cMakeSysConfigJObject["CMakeFilePath"].toString();
             cmakeSysConfig.buildDir = cMakeSysConfigJObject["buildDir"].toString();
@@ -236,6 +242,7 @@ bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
             MakeSysConfig makeSysConfig;
             makeSysConfig.c_ComplierPath = makeSysConfigJObject["c_ComplierPath"].toString();
             makeSysConfig.cxx_ComplierPath = makeSysConfigJObject["cxx_ComplierPath"].toString();
+            makeSysConfig.targetName = makeSysConfigJObject["targetName"].toString();
             makeSysConfig.makePath = makeSysConfigJObject["CMakeFilePath"].toString();
             makeSysConfig.makeFilePath = makeSysConfigJObject["makeFilePath"].toString();
 
@@ -274,6 +281,7 @@ bool ProjectSys::saveProject(ProjectConfig *project)
         CMakeSysConfig& cMakeSysConfig = project->cmakeConfig;
         genbuildJsonObject.insert("c_ComplierPath", cMakeSysConfig.c_ComplierPath);
         genbuildJsonObject.insert("cxx_ComplierPath", cMakeSysConfig.cxx_ComplierPath);
+        genbuildJsonObject.insert("targetName", cMakeSysConfig.targetName);
         genbuildJsonObject.insert("CMakePath", cMakeSysConfig.CMakePath);
         genbuildJsonObject.insert("CMakeFilePath", cMakeSysConfig.CMakeFilePath);
         genbuildJsonObject.insert("buildsystemPath", cMakeSysConfig.buildsystemPath);
@@ -283,6 +291,9 @@ bool ProjectSys::saveProject(ProjectConfig *project)
         projectJsonObject.insert("cMakeSysConfig", QJsonValue(genbuildJsonObject));
     }else if(project->projectType == Project_Type::MAKEFILE_PROJECT){
         MakeSysConfig& makeSysConfig = project->makeSysConfig;
+        genbuildJsonObject.insert("c_ComplierPath", makeSysConfig.c_ComplierPath);
+        genbuildJsonObject.insert("cxx_ComplierPath", makeSysConfig.cxx_ComplierPath);
+        genbuildJsonObject.insert("targetName", makeSysConfig.targetName);
         genbuildJsonObject.insert("makePath", makeSysConfig.makePath);
         genbuildJsonObject.insert("makeFilePath", makeSysConfig.makeFilePath);
         projectJsonObject.insert("makeSysConfig", QJsonValue(genbuildJsonObject));

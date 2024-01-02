@@ -17,8 +17,9 @@ CreateProjectDialog::CreateProjectDialog(QWidget *parent)
     this->setAttribute(Qt::WA_DeleteOnClose, true);
     this->setWindowFlags(this->windowFlags()| Qt::Dialog);
     connect(ui->rootBtn, &QToolButton::clicked, this, &CreateProjectDialog::_on_clicked_rootBtn);
-    connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &CreateProjectDialog::accept);
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &CreateProjectDialog::reject);
+    // ui头文件中已经连接了buttonbox的信号，不需要再次连接
+    // connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &CreateProjectDialog::accept);
+    // connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &CreateProjectDialog::reject);
 
 }
 

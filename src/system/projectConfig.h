@@ -35,6 +35,7 @@ public:
 
     QString c_ComplierPath = "";
     QString cxx_ComplierPath = "";
+    QString targetName = "";
 };
 
 class CMakeSysConfig : public GenerateBuildConfig
