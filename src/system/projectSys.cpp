@@ -114,7 +114,8 @@ bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type typ
 bool ProjectSys::loadProject(QString& projectDir, QString projectConfigFilePath)
 {
     if(projectConfigFilePath.isEmpty()){
-        projectConfigFilePath = ProjectSys::projectConfigFileDefaultName;
+        QDir nativeRootDir(projectDir);
+        projectConfigFilePath = nativeRootDir.absoluteFilePath(ProjectSys::projectConfigFileDefaultName);
     }
 
     // 解析配置文件
@@ -145,6 +146,9 @@ bool ProjectSys::loadProject(QString& projectDir, QString projectConfigFilePath)
 
 bool ProjectSys::openProject(ProjectConfig *project)
 {
+    if(project == nullptr){
+        return false;
+    }
     if(!projectConfigList.contains(project)){
         return false;
     }
@@ -155,6 +159,9 @@ bool ProjectSys::openProject(ProjectConfig *project)
 
 bool ProjectSys::closeProject(ProjectConfig *project)
 {
+    if(project == nullptr){
+        return false;
+    }
     if(!saveProject(project)){
         return false;
     }
@@ -169,6 +176,9 @@ bool ProjectSys::closeProject(ProjectConfig *project)
 
 bool ProjectSys::cleanProjectMem(ProjectConfig *project)
 {
+    if(project == nullptr){
+        return false;
+    }
     if(!projectConfigList.removeOne(project)){
         return false;
     }
@@ -202,6 +212,9 @@ ProjectConfig *ProjectSys::getCurrentProject()
 
 bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
 {
+    if(projectConfig == nullptr){
+        return false;
+    }
     QJsonParseError jerr;
     QJsonDocument doc = QJsonDocument::fromJson(data, &jerr);
     if (doc.isNull())
@@ -267,6 +280,9 @@ bool ProjectSys::parseConfig(QByteArray &data, ProjectConfig *projectConfig)
 
 bool ProjectSys::saveProject(ProjectConfig *project)
 {
+    if(project == nullptr){
+        return false;
+    }
     // json序列化
     QJsonObject projectJsonObject;
     QJsonObject genbuildJsonObject;

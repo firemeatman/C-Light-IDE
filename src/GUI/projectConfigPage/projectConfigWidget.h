@@ -19,7 +19,10 @@ private:
     Ui::ProjectConfigWidget *ui;
 
 public slots:
-    void projectLoaded(ProjectConfig* newProject);
+    void _on_projectLoaded(ProjectConfig* newProject);
+    void _on_projectNameEdited();
+    void _on_targetNameEdited();
+    void _on_clicked_rootBtn();
 };
 
 #endif // PROJECTCONFIGWIDGET_H

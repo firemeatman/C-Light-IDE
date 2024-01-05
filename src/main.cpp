@@ -59,6 +59,11 @@ void init_app(){
 }
 
 void save_data(){
+
+    ProjectConfig* project = GlobalData::projectSys->getCurrentProject();
+    GlobalData::projectSys->closeProject(project);
+    GlobalData::projectSys->cleanProjectMem(project);
+
     QSettings settings("config.ini", QSettings::IniFormat);
     settings.beginGroup("gengerateSetting");
     settings.setValue("complierDir",GlobalData::complierDir);

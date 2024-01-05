@@ -18,7 +18,7 @@ public:
 private:
     Ui::debugConfigWidget *ui;
 public slots:
-    void projectLoaded(ProjectConfig* newProject);
+    void _on_projectLoaded(ProjectConfig* newProject);
 };
 
 #endif // DEBUGCONFIGWIDGET_H

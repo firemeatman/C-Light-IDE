@@ -13,7 +13,7 @@ debugConfigWidget::~debugConfigWidget()
     delete ui;
 }
 
-void debugConfigWidget::projectLoaded(ProjectConfig *newProject)
+void debugConfigWidget::_on_projectLoaded(ProjectConfig *newProject)
 {
     ui->debugerLineEdit->setText(newProject->debugConfig.debugerPath);
 }

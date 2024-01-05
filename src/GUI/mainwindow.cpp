@@ -107,6 +107,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_on_makeCompleted);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskStart, makeInfoWidget, &MakeInfoWidget::_on_makeStart);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, sideMenuWidget, &SideMenuWidget::_on_runBtnTaskComplete);
+
+    connect(GlobalData::projectSys, &ProjectSys::projectLoaded, projectConfigWidget, &ProjectConfigWidget::_on_projectLoaded);
+    connect(GlobalData::projectSys, &ProjectSys::projectLoaded, genBuildConfigWidget, &GenBuildConfigWidget::_on_projectLoaded);
+    connect(GlobalData::projectSys, &ProjectSys::projectLoaded, _debugConfigWidget, &debugConfigWidget::_on_projectLoaded);
+
 }
 MainWindow::~MainWindow()
 {

@@ -18,7 +18,16 @@ public:
 private:
     Ui::GenBuildConfigWidget *ui;
 public slots:
-    void projectLoaded(ProjectConfig* newProject);
+    void _on_projectLoaded(ProjectConfig* newProject);
+private slots:
+    void on_BuildSysComboBox_currentIndexChanged(int index);
+    void on_cmakePathBtn_clicked();
+    void on_cmakelistFileBtn_clicked();
+    void on_cmakeCComplierBtn_clicked();
+    void on_cmakeCXXComplierBtn_clicked();
+    void on_cmakeUseBuildBtn_clicked();
+    void on_cmakeBuildDirBtn_clicked();
+    void on_cmakeInstallBtn_clicked();
 };
 
 #endif // GENBUILDCONFIGWIDGET_H

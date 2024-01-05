@@ -31,6 +31,8 @@ public:
     static QString lastProjectDir;
 
 
+
+
 private:
 //    static QMutex makeMutex;
 //    static QMutex debugMutex;
