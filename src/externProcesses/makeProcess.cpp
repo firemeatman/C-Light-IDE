@@ -42,13 +42,11 @@ bool MakeProcess::make(QString &makeExePath, QString &mkFileDir, QString &mkFile
    process->waitForStarted();
    process->waitForFinished();
    if(process->exitStatus() == QProcess::NormalExit){
-       int exitCode = process->exitCode();
-       qDebug()<<"make退出代码: "<<exitCode;
+       return true;
 
    }else{
-       qDebug()<<"make崩溃了";
+       return false;
    }
-
    return true;
 
 }
@@ -67,14 +65,13 @@ bool MakeProcess::clean(QString &makeExePath, QString &mkFileDir, QString &mkFil
    process->waitForStarted();
    process->waitForFinished();
    if(process->exitStatus() == QProcess::NormalExit){
-       int exitCode = process->exitCode();
-       qDebug()<<"make退出代码: "<<exitCode;
+       return true;
 
    }else{
-       qDebug()<<"make崩溃了";
+       return false;
    }
-
    return true;
+
 }
 
 QProcess *MakeProcess::getProcess() const

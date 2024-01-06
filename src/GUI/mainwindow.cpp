@@ -104,6 +104,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(codeFileListWidget, &CodeFileListWidget::switchFile, codePageEditWidget, &CodePageEditWidget::_on_switchFile);
     // 外部程序相关信号连接
     connect(GlobalData::ExternProcessThread->getMakeProcess(), &MakeProcess::msgRecved, makeInfoWidget, &MakeInfoWidget::addMsg);
+    connect(GlobalData::ExternProcessThread->getCmakeProcess(), &CmakeProcess::msgRecved, makeInfoWidget, &MakeInfoWidget::addMsg);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, makeInfoWidget, &MakeInfoWidget::_on_makeCompleted);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskStart, makeInfoWidget, &MakeInfoWidget::_on_makeStart);
     connect(GlobalData::ExternProcessThread, &ExternProcessThread::taskComplete, sideMenuWidget, &SideMenuWidget::_on_runBtnTaskComplete);

@@ -96,6 +96,20 @@ void MakeInfoWidget::_on_makeCompleted(QString &taskName, int code, QString &inf
             type = SysErrorMsg;
             outInfo = "make程序异常退出，clean失败!";
         }
+    }else if(taskName == "cmakeBuild"){
+        if(code == 0){
+            outInfo = "cmake Build 完成!";
+        }else{
+            type = SysErrorMsg;
+            outInfo = "cmake程序异常退出，Build失败!";
+        }
+    }else if(taskName == "cmakeInstall"){
+        if(code == 0){
+            outInfo = "cmake Install 完成!";
+        }else{
+            type = SysErrorMsg;
+            outInfo = "cmake程序异常退出，Install失败!";
+        }
     }
     addStr(outInfo,type);
 }
@@ -107,6 +121,10 @@ void MakeInfoWidget::_on_makeStart(QString &taskName, QString &from)
         outInfo = "开始make...";
     }else if(taskName == "clean"){
         outInfo = "开始clean...";
+    }else if(taskName == "cmakeBuild"){
+        outInfo = "开始cmake Build...";
+    }else if(taskName == "cmakeInstall"){
+        outInfo = "开始cmake Install...";
     }
     addStr(outInfo,SysInfoMsg);
 }

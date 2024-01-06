@@ -66,6 +66,15 @@ void ExternProcessThread::run()
             }else if(commend.commendName == "clean"){
                 cleanHandel(commend, &code);
                 doflag = true;
+            }else if(commend.commendName == "cmakeProcessConfig"){
+                cmakeProcessConfigHandel(commend, &code);
+                doflag = true;
+            }else if(commend.commendName == "cmakeBuild"){
+                cmakeBuildHandel(commend, &code);
+                doflag = true;
+            }else if(commend.commendName == "cmakeInstall"){
+                cmakeInstallHandel(commend, &code);
+                doflag = true;
             }else if(commend.commendName == "run target"){
                 runTargetHandel(commend, &code);
                 doflag = true;
@@ -122,6 +131,76 @@ void ExternProcessThread::cleanHandel(CommendStr &commend, int* code)
         mkFileName = commend.paramMap["mkFileName"];
     }
     if(makeProcess->clean(makeExePath,mkFileDir,mkFileName)){
+        *code = 0;
+    }else{
+        *code = -1;
+    }
+}
+
+void ExternProcessThread::cmakeProcessConfigHandel(CommendStr &commend, int *code)
+{
+    QString cComplierPath;
+    QString cxxComplierPath;
+    QString CMakePath = "";
+    QString CMakeFilePath = "";
+    QString buildDir = "";
+    QString installDir = "";
+    QString buildsystem = "";
+    QString buildsystemPath = "";
+
+    if(commend.paramMap.contains("cComplierPath")){
+        cComplierPath = commend.paramMap["cComplierPath"];
+    }
+    if(commend.paramMap.contains("cxxComplierPath")){
+        cxxComplierPath = commend.paramMap["cxxComplierPath"];
+    }
+    if(commend.paramMap.contains("CMakePath")){
+        CMakePath = commend.paramMap["CMakePath"];
+    }
+    if(commend.paramMap.contains("CMakeFilePath")){
+        CMakeFilePath = commend.paramMap["CMakeFilePath"];
+    }
+    if(commend.paramMap.contains("buildDir")){
+        buildDir = commend.paramMap["buildDir"];
+    }
+    if(commend.paramMap.contains("installDir")){
+        installDir = commend.paramMap["installDir"];
+    }
+    if(commend.paramMap.contains("buildsystem")){
+        buildsystem = commend.paramMap["buildsystem"];
+    }
+    if(commend.paramMap.contains("buildsystemPath")){
+        buildsystemPath = commend.paramMap["buildsystemPath"];
+    }
+
+    CmakeProcess::Cmake_Param cmakeParam = {
+        CMakePath,
+        CMakeFilePath,
+        buildDir,
+        installDir,
+        buildsystem,
+        buildsystemPath,
+        cComplierPath,
+        cxxComplierPath,
+    };
+    cmakeProcess->setCmakeParam(cmakeParam);
+
+    *code = 0;
+}
+
+void ExternProcessThread::cmakeBuildHandel(CommendStr &commend, int *code)
+{
+
+    if(cmakeProcess->build()){
+        *code = 0;
+    }else{
+        *code = -1;
+    }
+}
+
+void ExternProcessThread::cmakeInstallHandel(CommendStr &commend, int *code)
+{
+    if(cmakeProcess->install()){
         *code = 0;
     }else{
         *code = -1;

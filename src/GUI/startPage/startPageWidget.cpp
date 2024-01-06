@@ -36,7 +36,16 @@ void StartPageWidget::_on_clicked_openBtn()
         QString path = fileList.at(0);
         GlobalData::lastProjectDir = path;
         // 打开项目
-        GlobalData::projectSys->loadProject(path);
+        if(!GlobalData::projectSys->loadProject(path)){
+            QMessageBox::StandardButton res = QMessageBox::question(this, "打开项目出错",
+                                            "似乎该目录下没有项目配置文件，是否要在该目录下创建项目？",
+                                            QMessageBox::Yes | QMessageBox::No);
+            if(res == QMessageBox::Yes){
+                _on_clicked_createBtn();
+            }else{
+                return;
+            }
+        }
         //跳转编码页面
         GlobalData::global_mainWindow->_on_clicked_CodeBtn();
         CodeTreeSideWidget* treeSideWidget = GlobalData::global_mainWindow->getCodeTreeSideWidget();

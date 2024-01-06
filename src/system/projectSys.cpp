@@ -54,13 +54,20 @@ bool ProjectSys::createProject(ProjectConfig *project)
 
 bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type type, ProjectConfig *project)
 {
+
+    QDir nativeRootDir(rootDir);
+
     project = new ProjectConfig();
     project->projectName = name;
     project->projectType = type;
     project->projectRootDir = rootDir;
+    if(project->projectType == Project_Type::CMAKE_PROJECT){
+        project->cmakeConfig.buildDir = nativeRootDir.absoluteFilePath("build");
+        project->cmakeConfig.installDir = nativeRootDir.absoluteFilePath("install");
+    }
 
     // 创建项目配置文件
-    QDir nativeRootDir(rootDir);
+
     QString configFilePath = nativeRootDir.absoluteFilePath(ProjectSys::projectConfigFileDefaultName);
     QFile configFile(configFilePath);
     if (!configFile.open(QIODevice::WriteOnly)){
@@ -83,16 +90,20 @@ bool ProjectSys::createProject(QString &name, QString &rootDir, Project_Type typ
         outStr = ProjectSys::CmakeListTemplate;
     }
 
-    QFile buildFile(buildFilePath);
-    if (!buildFile.open(QIODevice::WriteOnly | QIODevice::Text)){
-        if(project == nullptr){
-            delete project;
+    // 如果构建文件不存在，就为其创建
+    QFileInfo buildFileinfo(buildFilePath);
+    if(!buildFileinfo.isFile()){
+        QFile buildFile(buildFilePath);
+        if (!buildFile.open(QIODevice::WriteOnly | QIODevice::Text)){
+            if(project == nullptr){
+                delete project;
+            }
+            return false;
         }
-        return false;
+        QTextStream textOut(&buildFile);
+        textOut << outStr;
+        buildFile.close();
     }
-    QTextStream textOut(&buildFile);
-    textOut << outStr;
-    buildFile.close();
 
     // 保存一次项目配置，打开项目，并存入系统管理
     if(!saveProject(project)){

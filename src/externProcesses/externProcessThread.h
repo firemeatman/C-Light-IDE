@@ -47,8 +47,16 @@ private:
     QProcess* targetExeCmdProcess = nullptr;
     BlockingQueue<ExternProcessThread::CommendStr>* commendQueue;
 
+    // make程序
     void makeHandel(ExternProcessThread::CommendStr& commend, int* code);
     void cleanHandel(ExternProcessThread::CommendStr& commend, int* code);
+
+    // cmake程序
+    void cmakeProcessConfigHandel(ExternProcessThread::CommendStr& commend, int* code);
+    void cmakeBuildHandel(ExternProcessThread::CommendStr& commend, int* code);
+    void cmakeInstallHandel(ExternProcessThread::CommendStr& commend, int* code);
+
+    // 目标程序
     void runTargetHandel(ExternProcessThread::CommendStr& commend, int* code);
 
 signals:
