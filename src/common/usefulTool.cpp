@@ -1,4 +1,5 @@
 #include "usefulTool.h"
+#include <QFileInfo>
 
 UsefulTool::UsefulTool() {}
 
@@ -6,9 +7,15 @@ QStringList UsefulTool::userSelectFile(QString& windowTitle, QFileDialog::FileMo
                                                  QString currentDir, QWidget* parent)
 {
     QFileDialog *fileDialog = new QFileDialog(parent);
+    QFileInfo fileInfo(currentDir);
     fileDialog->setWindowTitle(windowTitle);
     if(!currentDir.isEmpty()){
-        fileDialog->setDirectory(currentDir);
+        if(fileInfo.isDir()){
+            fileDialog->setDirectory(currentDir);
+        }else if(fileInfo.isFile()){
+            fileDialog->setDirectory(fileInfo.absolutePath());
+        }
+
     }
     fileDialog->setOption(QFileDialog::DontUseNativeDialog);
     fileDialog->setFileMode(fileMode);

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>resource/icons/play_regular_icon_512px.png</file>
+        <file>resource/icons/code_icon_512px.png</file>
+        <file>resource/icons/complier_settings_icon_512px.png</file>
+        <file>resource/icons/document_icon_512px.png</file>
+        <file>resource/icons/file.png</file>
+        <file>resource/icons/folder.png</file>
+    </qresource>
+</RCC>

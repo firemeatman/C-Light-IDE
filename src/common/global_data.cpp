@@ -1,22 +1,22 @@
 #include "global_data.h"
 
 
-MainWindow* GlobalData::global_mainWindow = nullptr;
-
-CodeFileSys* GlobalData::codeFileSys = nullptr;
-ProjectSys* GlobalData::projectSys = nullptr;
+MainWindow* GlobalData::mainWindow = nullptr;
+ProjectManager* GlobalData::projectManager = nullptr;
 ExternProcessThread* GlobalData::ExternProcessThread = nullptr;
+LastChoices GlobalData::lastChoices;
+QList<HistoryProject> GlobalData::historyProjectList;
 
-QString GlobalData::complierDir;
-QString GlobalData::makeExePath;
-QString GlobalData::mainMakefilePath;
-QString GlobalData::mainMakefileDir;
-QString GlobalData::mainMakefileFullName;
-QString GlobalData::targetExeDir;
-QString GlobalData::targetExeName;
-QString GlobalData::debugerExePath;
+// QString GlobalData::complierDir;
+// QString GlobalData::makeExePath;
+// QString GlobalData::mainMakefilePath;
+// QString GlobalData::mainMakefileDir;
+// QString GlobalData::mainMakefileFullName;
+// QString GlobalData::targetExeDir;
+// QString GlobalData::targetExeName;
+// QString GlobalData::debugerExePath;
 
-QString GlobalData::lastProjectDir;
+// QString GlobalData::lastProjectDir;
 
 GlobalData::GlobalData()
 {
