@@ -52,7 +52,7 @@ void HistoryListWidget::resetProjectItems(QList<HistoryProject> &list)
 
 }
 
-void HistoryListWidget::insetProjectItem(HistoryProject &item, int pos)
+void HistoryListWidget::insertProjectItem(HistoryProject &item, int pos)
 {
     int size = this->count();
     int index = 0;
@@ -84,6 +84,21 @@ void HistoryListWidget::deleProjectItem(int index)
 
     form->deleteLater();
     SAFE_DELE_P(listItem);
+}
+
+int HistoryListWidget::isProjectItemExist(QString &configPath)
+{
+    int size = this->count();
+    int  index = -1;
+    for(int i=0;i<size;i++){
+        HistoryItemForm* form = static_cast<HistoryItemForm*>(this->itemWidget(this->item(i)));
+        if(!form) continue;
+        if(configPath == form->path){
+            index = i;
+            break;
+        }
+    }
+    return index;
 }
 
 void HistoryListWidget::_on_itemPressed(QListWidgetItem *item)

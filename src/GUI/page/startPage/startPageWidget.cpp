@@ -66,21 +66,22 @@ void StartPageWidget::_on_clicked_createBtn()
 void StartPageWidget::_on_create_finished(int res)
 {
     if(res == QDialog::Accepted){
-        // // 跳转
-        // QVariantMap jumpParam;
-        // GlobalData::mainWindow->jump(WindowPageRoute::CodePage, jumpParam);
+
     }
 }
 
 void StartPageWidget::_on_projectAdded(std::shared_ptr<Project> project)
 {
-    // 历史列表
+    // 历史列表变动
     HistoryProject history;
     QJsonObject jRoot = project->getRootConfigJson();
     history.name = jRoot[Project::configkey_projectName].toString();
     history.rootPath = project->configFilePath;
-
-    this->hisWidget->insetProjectItem(history, 0);
+    int pos = this->hisWidget->isProjectItemExist(history.rootPath);
+    if(pos >= 0){
+        this->hisWidget->deleProjectItem(pos);
+    }
+    this->hisWidget->insertProjectItem(history, 0);
     // 跳转
     QVariantMap param;
     GlobalData::mainWindow->jump(WindowPageRoute::CodePage, param);

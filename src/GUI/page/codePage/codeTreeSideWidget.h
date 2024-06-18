@@ -5,6 +5,7 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QDir>
+#include <QMenu>
 #include "../../../project/project.h"
 
 namespace Ui {
@@ -34,11 +35,19 @@ private:
 public slots:
     void _on_itemDoubleCliced(QTreeWidgetItem *item);
     void _on_itemPressed(QTreeWidgetItem *item, int column);
+    void _on_rootMenuTriggered(QAction *action);
+    void _on_fileMenuTriggered(QAction *action);
     void _on_ProjectAdded(std::shared_ptr<Project> project);
+
+signals:
+    void fileOpend(QString filePath, QString name);
 
 private:
     Ui::CodeTreeSideWidget *ui;
     QTreeWidget* treeWidget = nullptr;
+    QMenu* treeRootMenu;
+    QMenu* fileMenu;
+    QMenu* addfileMenu;
     //QTreeWidgetItem* rootItem = nullptr;
 
 };

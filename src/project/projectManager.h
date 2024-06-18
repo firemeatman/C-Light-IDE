@@ -19,6 +19,7 @@ public:
     bool switchProject(std::shared_ptr<Project> project);
     bool switchProject(int index);
     bool isProjectExist(QString& configFilePath);
+    std::shared_ptr<Project> findProject(QString& path);
 
     int getCurrentIndex() const;
     std::shared_ptr<Project> getCurrentProject() const;

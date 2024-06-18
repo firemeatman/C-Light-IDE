@@ -11,6 +11,7 @@
 
 #include "sideMenu/sideMenuWidget.h"
 #include "../../page/startPage/startPageWidget.h"
+#include "../../page/codePage/codePage.h""
 #include "../../page/codePage/codePageEditWidget.h"
 #include "../../page/codePage/codeTreeSideWidget.h"
 #include "../../page/codePage/codeFileListWidget.h"
@@ -61,48 +62,33 @@ MainWindow::MainWindow(QWidget *parent)
     this->statusBar()->addWidget(makeOutBtn);
 
     //============================初始化页面=================================
+    // 页面管理器
+    stackWidget = new QStackedWidget(this);
+    this->setCentralWidget(stackWidget);
+
     // ---开始页面
     startPageWidget = new StartPageWidget(this);
-    Page* page_p = new Page(WindowPageRoute::StartPage, startPageWidget);
-    this->pageList.append(page_p);
-
+    stackWidget->addWidget(startPageWidget); // 0
     // ---代码窗口
-    codePageEditWidget = new CodePageEditWidget(this);
-    codeTreeSideWidget = new CodeTreeSideWidget(this);
-    codeFileListWidget = new CodeFileListWidget(this);
-    codeTreeSidedockWidget = new QDockWidget(this);
-    codeFileListdockWidget = new QDockWidget(this);
-    codePageEditWidget->hide();
-    codeTreeSidedockWidget->setWidget(codeTreeSideWidget);
-    codeTreeSidedockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    codeTreeSidedockWidget->hide();
-    codeFileListdockWidget->setWidget(codeFileListWidget);
-    codeFileListdockWidget->setFloating(false);
-    codeFileListdockWidget->hide();
-
-    page_p = new Page(WindowPageRoute::CodePage, codePageEditWidget);
-    page_p->addDock(codeTreeSidedockWidget, false);
-    page_p->addDock(codeFileListdockWidget, false);
-    this->pageList.append(page_p);
+    codePage = new CodePage(this);
+    stackWidget->addWidget(codePage); // 1
 
     // ---配置窗口
-    projectConfigSideMenu = new ProjectConfigSideMenu(this);
-    projectConfigWidget = new ProjectConfigWidget(this);
-    genBuildConfigWidget = new GenBuildConfigWidget(this);
-    _debugConfigWidget = new debugConfigWidget(this);
-    projectConfigSideMenuDockWidget = new QDockWidget(this);
-    projectConfigWidget->hide();
-    genBuildConfigWidget->hide();
-    _debugConfigWidget->hide();
-    projectConfigSideMenuDockWidget->setWidget(projectConfigSideMenu);
-    projectConfigSideMenuDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    projectConfigSideMenuDockWidget->hide();
-    page_p = new Page(WindowPageRoute::ConfigPage, codePageEditWidget);
-    page_p->addDock(projectConfigSideMenuDockWidget, false);
-    this->pageList.append(page_p);
+    // projectConfigSideMenu = new ProjectConfigSideMenu(this);
+    // projectConfigWidget = new ProjectConfigWidget(this);
+    // genBuildConfigWidget = new GenBuildConfigWidget(this);
+    // _debugConfigWidget = new debugConfigWidget(this);
+    // projectConfigSideMenuDockWidget = new QDockWidget(this);
+    // projectConfigWidget->hide();
+    // genBuildConfigWidget->hide();
+    // _debugConfigWidget->hide();
+    // projectConfigSideMenuDockWidget->setWidget(projectConfigSideMenu);
+    // projectConfigSideMenuDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    // projectConfigSideMenuDockWidget->hide();
+    // page_p = new Page(WindowPageRoute::ConfigPage, codePageEditWidget);
+    // page_p->addDock(projectConfigSideMenuDockWidget, false);
+    // this->pageList.append(page_p);
 
-    // 设置起始页面
-    this->setCentralWidget(startPageWidget);
 
     //===============================信号===========================================
 
@@ -127,51 +113,26 @@ MainWindow::MainWindow(QWidget *parent)
 }
 MainWindow::~MainWindow()
 {
-    for(auto p : this->pageList){
-        SAFE_DELE_P(p);
-    }
     delete ui;
 }
 
 bool MainWindow::jump(WindowPageRoute route, QVariantMap &param)
 {
     bool flag = true;
-    this->takeCentralWidget();
 
-    // 移除其他页面的dock；设置主部件
-    int size = this->pageList.size();
-    Page* page_p = nullptr;
-    for(int i=0; i<size;i++){
-        page_p = pageList[i];
-        if(route == page_p->routeName){
-            this->setCentralWidget(page_p->centralWindow);
-            page_p->centralWindow->show();
-            continue;
-        }
-
-        for(auto docInfo : page_p->dockList){
-            this->removeDockWidget(docInfo.dock_p);
-        }
-    }
-
-    // 添加dock
     switch (route) {
     case WindowPageRoute::StartPage:
     {
+        this->stackWidget->setCurrentWidget(this->startPageWidget);
         break;
     }
     case WindowPageRoute::CodePage:
     {
-        this->addDockWidget(Qt::LeftDockWidgetArea, codeTreeSidedockWidget);
-        this->splitDockWidget(codeTreeSidedockWidget,codeFileListdockWidget,Qt::Horizontal);
-        codeTreeSidedockWidget->show();
-        codeFileListdockWidget->show();
+        this->stackWidget->setCurrentWidget(this->codePage);
         break;
     }
     case WindowPageRoute::ConfigPage:
     {
-        this->addDockWidget(Qt::LeftDockWidgetArea, projectConfigSideMenuDockWidget);
-        projectConfigSideMenuDockWidget->show();
         break;
     }
     default:
@@ -200,19 +161,4 @@ void MainWindow::_on_clicked_makeOutBtn()
     }else{
         this->removeDockWidget(makeOutdockWidget);
     }
-}
-
-
-Page::Page(WindowPageRoute route, QWidget *centralWindow)
-{
-    this->routeName = route;
-    this->centralWindow = centralWindow;
-}
-
-void Page::addDock(QDockWidget *dock, bool state)
-{
-    DockInfo dockInfo;
-    dockInfo.dock_p = dock;
-    dockInfo.settedState = state;
-    this->dockList.append(dockInfo);
 }

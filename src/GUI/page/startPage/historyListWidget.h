@@ -18,8 +18,9 @@ public:
     int maxHistoryNum = 10;
 
     void resetProjectItems(QList<HistoryProject>& list);
-    void insetProjectItem(HistoryProject& item, int pos); // pos: 插入位置，-1末尾插入,...
+    void insertProjectItem(HistoryProject& item, int pos); // pos: 插入位置，-1末尾插入,...
     void deleProjectItem(int index);
+    int isProjectItemExist(QString& configPath); // 返回index;-1为不存在
 
 private:
     QMenu* menu;

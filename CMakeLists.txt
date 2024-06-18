@@ -85,6 +85,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/GUI/page/startPage/historyListWidget.h src/GUI/page/startPage/historyListWidget.cpp
         src/GUI/page/startPage/historyItemForm.h src/GUI/page/startPage/historyItemForm.cpp src/GUI/page/startPage/historyItemForm.ui
         src/model/modelDataDef.h src/model/modelDataDef.cpp
+        src/GUI/page/codePage/codePage.h src/GUI/page/codePage/codePage.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET C_Light_IDE APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -1,8 +1,9 @@
 #include "codeTreeSideWidget.h"
 #include "ui_codeTreeSideWidget.h"
 
-#include <QPushButton>
+#include <QVBoxLayout>
 #include <QHeaderView>
+
 #include "../../../common/global_data.h"
 
 CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
@@ -19,13 +20,27 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     treeWidget->setFrameStyle(QFrame::Sunken);
     treeWidget->setAnimated(true); //展开折叠动画
 
-    ui->verticalLayout->addWidget(treeWidget);
-    ui->widget->hide();
-    ui->pushButton->setFixedSize(80,30);
+    QVBoxLayout* vbox = new QVBoxLayout(this);
+    vbox->addWidget(treeWidget);
+
+    // 菜单设置
+    treeRootMenu = new QMenu(this);
+    treeRootMenu->addAction("关闭项目");
+
+    fileMenu = new QMenu(this);
+    addfileMenu = new QMenu("创建文件",this);
+    addfileMenu->addAction(".h文件");
+    addfileMenu->addAction(".c文件");
+    addfileMenu->addAction(".cpp文件");
+    addfileMenu->addAction("c++类");
+    fileMenu->addMenu(addfileMenu);
 
     connect(this->treeWidget, &QTreeWidget::itemDoubleClicked, this, &CodeTreeSideWidget::_on_itemDoubleCliced);
     connect(this->treeWidget, &QTreeWidget::itemPressed, this, &CodeTreeSideWidget::_on_itemPressed);
     connect(GlobalData::projectManager, &ProjectManager::projectAdded, this, &CodeTreeSideWidget::_on_ProjectAdded);
+
+    connect(treeRootMenu, &QMenu::triggered, this, &CodeTreeSideWidget::_on_rootMenuTriggered);
+    connect(fileMenu, &QMenu::triggered, this, &CodeTreeSideWidget::_on_fileMenuTriggered);
 
 }
 
@@ -97,7 +112,37 @@ void CodeTreeSideWidget::_on_itemDoubleCliced(QTreeWidgetItem *item)
 
 void CodeTreeSideWidget::_on_itemPressed(QTreeWidgetItem *item, int column)
 {
-    if(qApp->mouseButtons() == Qt::RightButton){
+    if(qApp->mouseButtons() != Qt::RightButton){
+        return;
+    }
+
+    if(item->parent() == nullptr){
+        treeRootMenu->exec(QCursor::pos());
+    }else{
+        fileMenu->exec(QCursor::pos());
+    }
+}
+
+void CodeTreeSideWidget::_on_rootMenuTriggered(QAction *action)
+{
+    if(action->text() == "关闭项目"){
+        QTreeWidgetItem* item = this->treeWidget->currentItem();
+        QString path = item->toolTip(0);
+        std::shared_ptr<Project> project = GlobalData::projectManager->findProject(path);
+        if(project){
+            GlobalData::projectManager->removeProject(project);
+            int index = this->treeWidget->indexOfTopLevelItem(item);
+            if(index >= 0){
+                this->treeWidget->takeTopLevelItem(index);
+                SAFE_DELE_P(item);
+            }
+        }
+    }
+}
+
+void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
+{
+    if(action->text() == ".h文件"){
 
     }
 }
@@ -106,3 +151,4 @@ void CodeTreeSideWidget::_on_ProjectAdded(std::shared_ptr<Project> project)
 {
     this->loadProjectFileTree(*project);
 }
+

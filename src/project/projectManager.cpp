@@ -77,6 +77,20 @@ bool ProjectManager::isProjectExist(QString &configFilePath)
     return false;
 }
 
+std::shared_ptr<Project> ProjectManager::findProject(QString &path)
+{
+    std::shared_ptr<Project> p = nullptr;
+    int size = projectList.size();
+    for(int i=0; i<size ; i++){
+        std::shared_ptr<Project> temp_p = projectList.at(i);
+        if(temp_p->configFilePath == path || temp_p->projectRootDir == path){
+            p = temp_p;
+            break;
+        }
+    }
+    return p;
+}
+
 
 int ProjectManager::getCurrentIndex() const
 {
