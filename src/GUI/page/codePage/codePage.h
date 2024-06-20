@@ -19,7 +19,8 @@ public:
     QDockWidget* codeTreeSidedockWidget = nullptr;
     QDockWidget* codeFileListdockWidget = nullptr;
 
-signals:
+public slots:
+    void _on_fileOpened(FileStruct file);
 };
 
 #endif // CODEPAGE_H

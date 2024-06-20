@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QFile>
 #include <QApplication>
+#include "../../../common/global_data.h"
 
 CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
     QWidget(parent),
@@ -36,14 +37,18 @@ CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
     connect(fileItemMenu, &QMenu::triggered, this, &CodeFileListWidget::_on_triggeredMenu);
     connect(listWidget, &QListWidget::currentItemChanged, this, &CodeFileListWidget::_on_currentItemChanged);
 
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileisChangedChanged,this,&CodeFileListWidget::_on_fileisChangedChanged);
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileOpened,this,&CodeFileListWidget::_on_fileOpened);
+
 }
 
 CodeFileListWidget::~CodeFileListWidget()
 {
+    listWidget->clear();
     delete ui;
 }
 
-int CodeFileListWidget::countRepeatNum(QString &name)
+int CodeFileListWidget::countRepeatNameNum(QString &name)
 {
     int num = listWidget->count();
     int count = 0;
@@ -56,17 +61,74 @@ int CodeFileListWidget::countRepeatNum(QString &name)
     return count;
 }
 
-
-void CodeFileListWidget::_on_openFile(QString path, QString name, QTreeWidgetItem *item)
+int CodeFileListWidget::fileItemIndex(QString &path)
 {
-
+    int num = listWidget->count();
+    int index = -1;
+    for(int i=0; i<num ; i++){
+        QString text = listWidget->item(i)->toolTip();
+        if(text.compare(path) == 0){
+            index=i;
+        }
+    }
+    return index;
 }
+
+void CodeFileListWidget::addFileItem(QString &name, QString& filePath)
+{
+    int repeatNum = countRepeatNameNum(name);
+    QString itemName = name + "(" + QString::number(repeatNum) + ")";
+    QListWidgetItem* listItem = new QListWidgetItem();
+    listItem->setText(name);
+    listItem->setToolTip(filePath);
+    listItem->setIcon(QIcon(":/icons/resource/icons/file.png"));
+    this->listWidget->addItem(listItem);
+}
+
+void CodeFileListWidget::removeFileItem(QString &filePath)
+{
+    int num = listWidget->count();
+    for(int i=0; i<num ; i++){
+        QString text = listWidget->item(i)->toolTip();
+        if(text == filePath){
+            QListWidgetItem* listItem = listWidget->takeItem(i);
+            SAFE_DELE_P(listItem);
+            break;
+        }
+    }
+}
+
+void CodeFileListWidget::_on_fileisChangedChanged(FileStruct file)
+{
+    int index = fileItemIndex(file.path);
+    QListWidgetItem* item = listWidget->item(index);
+    if(file.isChanged){
+        item->text() = file.name + "*";
+    }else{
+        item->text() = file.name;
+    }
+}
+
+void CodeFileListWidget::_on_fileOpened(FileStruct file)
+{
+    int index = fileItemIndex(file.path);
+    if(index >= 0){
+        listWidget->setCurrentRow(index);
+    }else{
+        addFileItem(file.name, file.path);
+    }
+}
+
 
 // 单击，右键打开菜单；左键显示文件数据
 void CodeFileListWidget::_on_clickedItem(QListWidgetItem *item)
 {
-    if(qApp->mouseButtons() == Qt::RightButton){
+    Qt::MouseButtons btns = qApp->mouseButtons();
+    if(btns == Qt::RightButton){
         fileItemMenu->exec(QCursor::pos());
+    }else if(btns == Qt::LeftButton){
+        QString path = item->toolTip();
+        GlobalData::editCodeManager->editFile(path);
     }
 }
 
@@ -78,6 +140,32 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
 {
     QString text = action->text();
     QListWidgetItem* item = listWidget->currentItem();
+    if(text == "关闭"){
+        QString path = item->toolTip();
+        GlobalData::editCodeManager->removeOpenedFile(path);
+        QListWidgetItem* p = listWidget->takeItem(listWidget->currentRow());
+        SAFE_DELE_P(p);
+    }else if(text == "关闭其他"){
+        int num = listWidget->count();
+        for(int i=num-1; i>=0 ; i--){
+            QListWidgetItem* listItem = listWidget->item(i);
+            if(listItem != item){
+                QString path = listItem->toolTip();
+                GlobalData::editCodeManager->removeOpenedFile(path);
+                listWidget->takeItem(i);
+                SAFE_DELE_P(listItem);
+            }
+        }
+    }else if(text == "关闭所有"){
+        int num = listWidget->count();
+        for(int i=num-1; i>=0 ; i--){
+            QListWidgetItem* listItem = listWidget->item(i);
+            QString path = listItem->toolTip();
+            GlobalData::editCodeManager->removeOpenedFile(path);
+            listWidget->takeItem(i);
+            SAFE_DELE_P(listItem);
+        }
+    }
 
 }
 

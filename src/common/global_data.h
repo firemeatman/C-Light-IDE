@@ -9,6 +9,7 @@
 
 #include "../GUI/window/mainWindow/mainwindow.h"
 #include "../project/projectManager.h"
+#include "../file/editCodeManager.h"
 #include "../externProcesses/externProcessThread.h"
 #include "../model/modelDataDef.h"
 
@@ -32,6 +33,7 @@ public:
 
     static MainWindow* mainWindow;
     static ProjectManager* projectManager;
+    static EditCodeManager* editCodeManager;
     static ExternProcessThread* ExternProcessThread;
 
     static LastChoices lastChoices;

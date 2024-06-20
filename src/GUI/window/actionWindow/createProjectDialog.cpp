@@ -16,9 +16,11 @@ CreateProjectDialog::CreateProjectDialog(QWidget *parent)
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                      | QDialogButtonBox::Cancel, this);
+    buttonBox->setCenterButtons(true);
     QVBoxLayout* vlayout = new QVBoxLayout(this);
     vlayout->addWidget(ui->widget, 4);
     vlayout->addWidget(buttonBox, 1);
+
     ui->comboBox->addItem("Cmake项目");
     ui->comboBox->addItem("makefile项目");
     ui->comboBox->setItemData(0, "CMake");

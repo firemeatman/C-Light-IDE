@@ -3,6 +3,7 @@
 
 MainWindow* GlobalData::mainWindow = nullptr;
 ProjectManager* GlobalData::projectManager = nullptr;
+EditCodeManager* GlobalData::editCodeManager = nullptr;
 ExternProcessThread* GlobalData::ExternProcessThread = nullptr;
 LastChoices GlobalData::lastChoices;
 QList<HistoryProject> GlobalData::historyProjectList;

@@ -4,24 +4,21 @@
 #include <QFile>
 #include <QStringDecoder>
 
-// #include "../../common/global_data.h"
+#include "../../../common/global_data.h"
 CodePageEditWidget::CodePageEditWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::CodePageEditWidget)
 {
     ui->setupUi(this);
-    QPlainTextEdit* m_codeEditor = new QPlainTextEdit(this);
-    m_codeEditor->setPlainText  ("int a = 10;");
-    m_codeEditor->setWordWrapMode(QTextOption::NoWrap);
-    m_codeEditor->resize(500,500);
-    QGridLayout* qGridLayout = new QGridLayout(this);
-    qGridLayout->addWidget(m_codeEditor);
-    codeEditor = m_codeEditor;
 
-    codeEditor->setWordWrapMode(QTextOption::NoWrap);
+    this->stackedWidget = new QStackedWidget(this);
+    QGridLayout* qGridLayout = new QGridLayout(this);
+    qGridLayout->addWidget(this->stackedWidget);
 
     //connect(codeEditor, &QPlainTextEdit::textChanged,this,&CodePageEditWidget::_on_textChanged);
-
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileEditing,this,&CodePageEditWidget::_on_fileEditing);
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileOpened,this,&CodePageEditWidget::_on_fileOpened);
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodePageEditWidget::_on_fileClosed);
 }
 
 CodePageEditWidget::~CodePageEditWidget()
@@ -29,13 +26,85 @@ CodePageEditWidget::~CodePageEditWidget()
     delete ui;
 }
 
+void CodePageEditWidget::loadEditor(QString &filePath)
+{
+    if(codeEditorMap.contains(filePath)){
+        QPlainTextEdit* codeEditor = codeEditorMap.value(filePath);
+        this->stackedWidget->setCurrentWidget(codeEditor);
+        currentEdittingFile = filePath;
+    }else{
+        QPlainTextEdit* codeEditor = new QPlainTextEdit(this);
+        codeEditor->setWordWrapMode(QTextOption::NoWrap);
+        QFile file(filePath);
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            return;
+        }
+        QByteArray data = file.readAll();
+        QString data_str(data);
+        codeEditor->setPlainText(data_str);
+        QTextDocument* doc = codeEditor->document();
+        connect(doc, &QTextDocument::modificationChanged, this, &CodePageEditWidget::_on_modificationChanged);
+        file.close();
+        codeEditorMap.insert(filePath, codeEditor);
+        this->stackedWidget->addWidget(codeEditor);
+        if(stackedWidget->count() == 1){
+            this->stackedWidget->setCurrentWidget(codeEditor);
+        }
+        currentEdittingFile = filePath;
+    }
+}
+
+void CodePageEditWidget::removeEdior(QString &filePath)
+{
+    if(codeEditorMap.contains(filePath)){
+        QPlainTextEdit* codeEditor  = codeEditorMap.value(filePath);
+        codeEditorMap.remove(filePath);
+        stackedWidget->removeWidget(codeEditor);
+        codeEditor->deleteLater();
+        currentEdittingFile = "";
+    }
+}
+
+void CodePageEditWidget::updateEditor(QString &filePath)
+{
+    if(codeEditorMap.contains(filePath)){
+        QPlainTextEdit* codeEditor  = codeEditorMap.value(filePath);
+        QFile file(filePath);
+        if(!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+            return;
+        }
+        QByteArray data = file.readAll();
+        QString data_str(data);
+        codeEditor->setPlainText(data_str);
+        file.close();
+    }
+}
+
 void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 {
-    // if(event->key() == Qt::Key_S && event->modifiers() == Qt::CTRL){
-    //     qDebug()<<"ctrl+S";
-    //     saveData(currentFileInfo);
-    //     GlobalData::codeFileSys->saveAllFile();
-    // }
+    if(event->key() == Qt::Key_S && event->modifiers() == Qt::CTRL){
+
+    }
+}
+
+void CodePageEditWidget::_on_modificationChanged(bool changed)
+{
+    GlobalData::editCodeManager->editFile(currentEdittingFile);
+}
+
+void CodePageEditWidget::_on_fileEditing(FileStruct file)
+{
+    loadEditor(file.path);
+}
+
+void CodePageEditWidget::_on_fileOpened(FileStruct file)
+{
+    loadEditor(file.path);
+}
+
+void CodePageEditWidget::_on_fileClosed(FileStruct file)
+{
+    removeEdior(file.path);
 }
 
 // void CodePageEditWidget::saveData(CodeFileSys::CodeFileInfo *target)
@@ -49,23 +118,5 @@ void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 //     }
 // }
 
-
-// void CodePageEditWidget::_on_switchFile(CodeFileSys::CodeFileInfo *prevFileInfo, CodeFileSys::CodeFileInfo *nextFileInfo)
-// {
-//     // 将上一个文件的内容从编辑器写入缓存
-//     saveData(prevFileInfo);
-
-//     // 在编辑器上显示当前文件的内容
-//     if(nextFileInfo != nullptr){
-//         QStringDecoder toUtf16(QStringDecoder::Utf8);
-//         QString unicode_str = toUtf16(nextFileInfo->data);
-//         codeEditor->setPlainText(unicode_str);
-//         currentFileInfo = nextFileInfo;
-//     }else{
-//         currentFileInfo = nullptr;
-//         codeEditor->setPlainText(QString());
-//     }
-
-// }
 
 

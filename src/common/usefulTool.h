@@ -10,6 +10,7 @@ public:
 
     static QStringList userSelectFile(QString& windowTitle, QFileDialog::FileMode fileMode,
                                          QString currentDir = "", QWidget* parent = nullptr);
+
 };
 
 #endif // USEFULTOOL_H

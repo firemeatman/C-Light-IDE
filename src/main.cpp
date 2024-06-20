@@ -34,6 +34,7 @@ void init_app(){
     GlobalData::ExternProcessThread->start();
 
     GlobalData::projectManager = new ProjectManager();
+    GlobalData::editCodeManager = new EditCodeManager();
 
     // 为了跨线程在信号中传递自定义参数，为其注册元数据类型
     qRegisterMetaType<QString>("QString&");//注册QString的引用
@@ -90,6 +91,7 @@ void relase_resouse(){
     GlobalData::ExternProcessThread->requestInterruption();
 
     SAFE_DELE_P(GlobalData::projectManager);
+    SAFE_DELE_P(GlobalData::editCodeManager);
     SAFE_DELE_P(GlobalData::ExternProcessThread);
 }
 
