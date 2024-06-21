@@ -62,6 +62,19 @@ bool EditCodeManager::setFileChanged(QString &path, bool isChanged)
     return flag;
 }
 
+bool EditCodeManager::setFileName(QString &path, QString &name)
+{
+    bool flag = false;
+    if(!openedfileMap.contains(path)){
+        return flag;
+    }
+    openedfileMap[path].name = name;
+    flag = true;
+    emit fileNameChanged(openedfileMap[path]);
+
+    return flag;
+}
+
 void EditCodeManager::_on_projectRemoved(std::shared_ptr<Project> project)
 {
 

@@ -4,8 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QMap>
-#include "../project/project.h"
-
+#include "../project/projectManager.h"
 // enum class FileSate{
 //     Open,
 
@@ -16,6 +15,8 @@ public:
     QString name;
     QString path;
     bool isChanged;
+
+    //std::shared_ptr<Project*> bindingProject = nullptr;
 };
 
 class EditCodeManager : public QObject
@@ -29,9 +30,11 @@ public:
     bool removeOpenedFile(QString& path);
     bool editFile(QString& path);
     bool setFileChanged(QString& path, bool isChanged);
+    bool setFileName(QString& path, QString& name);
 
 signals:
     void fileisChangedChanged(FileStruct file);
+    void fileNameChanged(FileStruct file);
     void fileEditing(FileStruct file);
     void fileOpened(FileStruct file);
     void fileClosed(FileStruct file);

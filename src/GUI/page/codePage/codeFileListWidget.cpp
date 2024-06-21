@@ -39,6 +39,7 @@ CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
 
     connect(GlobalData::editCodeManager, &EditCodeManager::fileisChangedChanged,this,&CodeFileListWidget::_on_fileisChangedChanged);
     connect(GlobalData::editCodeManager, &EditCodeManager::fileOpened,this,&CodeFileListWidget::_on_fileOpened);
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileNameChanged, this, &CodeFileListWidget::_on_fileNameChanged);
 
 }
 
@@ -79,7 +80,7 @@ void CodeFileListWidget::addFileItem(QString &name, QString& filePath)
     int repeatNum = countRepeatNameNum(name);
     QString itemName = name + "(" + QString::number(repeatNum) + ")";
     QListWidgetItem* listItem = new QListWidgetItem();
-    listItem->setText(name);
+    listItem->setText(itemName);
     listItem->setToolTip(filePath);
     listItem->setIcon(QIcon(":/icons/resource/icons/file.png"));
     this->listWidget->addItem(listItem);
@@ -101,11 +102,12 @@ void CodeFileListWidget::removeFileItem(QString &filePath)
 void CodeFileListWidget::_on_fileisChangedChanged(FileStruct file)
 {
     int index = fileItemIndex(file.path);
+    if(index < 0) return;
     QListWidgetItem* item = listWidget->item(index);
     if(file.isChanged){
-        item->text() = file.name + "*";
+        item->setText(file.name + "*");
     }else{
-        item->text() = file.name;
+        item->setText(file.name);
     }
 }
 
@@ -116,6 +118,19 @@ void CodeFileListWidget::_on_fileOpened(FileStruct file)
         listWidget->setCurrentRow(index);
     }else{
         addFileItem(file.name, file.path);
+    }
+}
+
+void CodeFileListWidget::_on_fileNameChanged(FileStruct file)
+{
+    int index = fileItemIndex(file.path);
+    if(index >= 0){
+        QListWidgetItem* item = listWidget->item(index);
+        if(file.isChanged){
+            item->setText(file.name + "*");
+        }else{
+            item->setText(file.name);
+        }
     }
 }
 

@@ -89,7 +89,7 @@ void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 
 void CodePageEditWidget::_on_modificationChanged(bool changed)
 {
-    GlobalData::editCodeManager->editFile(currentEdittingFile);
+    GlobalData::editCodeManager->setFileChanged(currentEdittingFile, changed);
 }
 
 void CodePageEditWidget::_on_fileEditing(FileStruct file)

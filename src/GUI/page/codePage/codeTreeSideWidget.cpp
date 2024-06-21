@@ -4,7 +4,7 @@
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include <QMessageBox>
-
+#include <QLineEdit>
 #include "../../../common/global_data.h"
 
 CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
@@ -36,6 +36,7 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     addfileMenu->addAction("c++类");
     fileMenu->addMenu(addfileMenu);
     fileMenu->addAction("创建文件夹");
+    fileMenu->addAction("重命名");
     fileMenu->addAction("删除文件");
     fileMenu->addAction("删除文件夹");
 
@@ -144,6 +145,38 @@ QString CodeTreeSideWidget::genDirSoleName(QDir &dir, QString name)
     return tempName + QString::number(count);
 }
 
+QTreeWidgetItem *CodeTreeSideWidget::addChildFileItem(QString &path, QTreeWidgetItem *parent)
+{
+    QFileInfo fileInfo(path);
+    if(!fileInfo.exists() || parent == nullptr){
+        return nullptr;
+    }
+    QTreeWidgetItem *child = new QTreeWidgetItem(parent);
+    child->setText(0,fileInfo.fileName());
+    child->setToolTip(0,fileInfo.absoluteFilePath());
+    if(fileInfo.isFile())
+    {
+        child->setIcon(0,QIcon(":/icons/resource/icons/file.png"));
+    }
+    else if(fileInfo.isDir())
+    {
+        child->setIcon(0,QIcon(":/icons/resource/icons/folder.png"));
+    }
+    return child;
+}
+
+void CodeTreeSideWidget::startEditTreeItem(QTreeWidgetItem *item, int colum)
+{
+    if(!item) return;
+    this->currentEditNameItem = item;
+    QLineEdit* lineEdit = new QLineEdit(this);
+    lineEdit->setText(item->text(colum));
+    lineEdit->selectAll();
+    lineEdit->setFocus();
+    connect(lineEdit, &QLineEdit::editingFinished, this, &CodeTreeSideWidget::_on_nameEditingFinished);
+    treeWidget->setItemWidget(item, colum, lineEdit);
+}
+
 void CodeTreeSideWidget::_on_itemDoubleCliced(QTreeWidgetItem *item)
 {
 
@@ -185,6 +218,10 @@ void CodeTreeSideWidget::_on_itemPressed(QTreeWidgetItem *item, int column)
     for(auto action: actionList){
         if(action->text() == "关闭项目"){
             if(!(type & SelectItemType::ProjectRoot)){
+                action->setVisible(false);
+            }
+        }else if(action->text() == "重命名"){
+            if(type & SelectItemType::ProjectRoot || type & SelectItemType::Dir){
                 action->setVisible(false);
             }
         }else if(action->text() == "删除文件"){
@@ -251,18 +288,15 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
             return;
         }
         file.close();
+        QTreeWidgetItem* parent = nullptr;
         if(fileInfo.isFile()){
-            QTreeWidgetItem* parent = item->parent();
-            if(parent){
-                clearChildren(parent);
-                QDir dir(parent->toolTip(0));
-                this->loadChildFile(dir, parent);
-            }
+            parent = item->parent();
         }else{
-            clearChildren(item);
-            QDir dir(filePath);
-            this->loadChildFile(dir, item);
+            parent = item;
         }
+        QTreeWidgetItem* newChild = addChildFileItem(path, parent);
+        // 重命名
+        this->startEditTreeItem(newChild, 0);
 
     }else if(text =="创建文件夹"){
         // 创建文件夹
@@ -287,20 +321,20 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
             }
         }
         //更新UI显示
+        QTreeWidgetItem* parent = nullptr;
         if(fileInfo.isFile()){
-            QTreeWidgetItem* parent = item->parent();
-            if(parent){
-                clearChildren(parent);
-                QDir dir(parent->toolTip(0));
-                this->loadChildFile(dir, parent);
-            }
+            parent = item->parent();
         }else{
-            clearChildren(item);
-            QDir dir(filePath);
-            this->loadChildFile(dir, item);
+            parent = item;
         }
-    }
-    else if(text =="删除文件"){
+        QTreeWidgetItem* newChild = addChildFileItem(path, parent);
+        // 重命名
+        this->startEditTreeItem(newChild, 0);
+    }else if(text =="重命名"){
+        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+        this->startEditTreeItem(item, 0);
+
+    }else if(text =="删除文件"){
         if(QFile::remove(filePath)){
             QTreeWidgetItem* parent = item->parent();
             if(parent){
@@ -318,5 +352,32 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
 void CodeTreeSideWidget::_on_ProjectAdded(std::shared_ptr<Project> project)
 {
     this->loadProjectFileTree(*project);
+}
+
+void CodeTreeSideWidget::_on_nameEditingFinished()
+{
+    try {
+        if (this->currentEditNameItem == nullptr){
+            throw std::exception();
+        }
+        QLineEdit *edit = qobject_cast<QLineEdit*>(treeWidget->itemWidget(currentEditNameItem, 0));
+        QString text = edit->text();
+        QString oldText = currentEditNameItem->text(0);
+        QString path = currentEditNameItem->toolTip(0);
+        QFileInfo fileInfo(path);
+        QDir dir = fileInfo.absoluteDir();
+        if(oldText != text){
+            if(!QFile::rename(path, dir.filePath(text))){
+                QMessageBox::critical(this, "重命名失败", "无法更改该文件名称！\nfile: "+path, QMessageBox::NoButton);
+                throw std::exception();
+            }
+            currentEditNameItem->setText(0, text);
+            GlobalData::editCodeManager->setFileName(path, text);
+        }
+
+    } catch (std::exception e) {
+
+    }
+    treeWidget->removeItemWidget(currentEditNameItem, 0);
 }
 

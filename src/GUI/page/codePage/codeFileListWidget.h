@@ -39,7 +39,7 @@ private:
 public slots:
     void _on_fileisChangedChanged(FileStruct file);
     void _on_fileOpened(FileStruct file);
-
+    void _on_fileNameChanged(FileStruct file);
     void _on_clickedItem(QListWidgetItem *item);
     void _on_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
     void _on_triggeredMenu(QAction* action);
