@@ -1,0 +1,3 @@
+[submodule "src/third/CodeEditor"]
+	path = src/third/CodeEditor
+	url = git@github.com:firemeatman/CodeEditor.git

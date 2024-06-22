@@ -13,19 +13,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
-set(THIRD_RESOURCES_FILE
 
-)
+set(THIRD_DIR src/third/CodeEditor/codeEditor/)
+set(THIRD_CODE_FILES)
+file(GLOB THIRD_CODE_FILES ${THIRD_DIR}/*.cpp ${THIRD_DIR}/*.h)
 
-set(THIRD_SOURCE_FILES
-    src/third/TreeMenu.h
-    src/third/TreeMenu.cpp
-    src/third/newBulidFile.h src/third/newBulidFile.cpp
-    src/third/newBuildfolder.h src/third/newBuildfolder.cpp
-)
 
 set(Common_Code_Files
-   src/common/forceAccess.h src/common/forceAccess.cpp
+    src/common/forceAccess.h src/common/forceAccess.cpp
     src/common/global_data.h src/common/global_data.cpp
     src/common/blockingQueue.h
     src/common/usefulTool.h src/common/usefulTool.cpp
@@ -39,13 +34,19 @@ set(GUI_Code_Files
     src/GUI/window/mainWindow/mainwindow.h src/GUI/window/mainWindow/mainwindow.cpp src/GUI/window/mainWindow/mainwindow.ui
     src/GUI/window/mainWindow/sideMenu/sideMenuWidget.h src/GUI/window/mainWindow/sideMenu/sideMenuWidget.cpp src/GUI/window/mainWindow/sideMenu/sideMenuWidget.ui
     src/GUI/window/actionWindow/createProjectDialog.h src/GUI/window/actionWindow/createProjectDialog.cpp src/GUI/window/actionWindow/createProjectDialog.ui
+    src/GUI/window/actionWindow/createFileDialog.h src/GUI/window/actionWindow/createFileDialog.cpp src/GUI/window/actionWindow/createFileDialog.ui
     src/GUI/window/infoWindow/terminalWidget.h src/GUI/window/infoWindow/terminalWidget.cpp
     src/GUI/window/infoWindow/makeInfoWidget.h src/GUI/window/infoWindow/makeInfoWidget.cpp src/GUI/window/infoWindow/makeInfoWidget.ui
 
     src/GUI/page/startPage/startPageWidget.h src/GUI/page/startPage/startPageWidget.cpp src/GUI/page/startPage/startPageWidget.ui
+    src/GUI/page/startPage/historyListWidget.h src/GUI/page/startPage/historyListWidget.cpp
+    src/GUI/page/startPage/historyItemForm.h src/GUI/page/startPage/historyItemForm.cpp src/GUI/page/startPage/historyItemForm.ui
+
+    src/GUI/page/codePage/codePage.h src/GUI/page/codePage/codePage.cpp
     src/GUI/page/codePage/codePageEditWidget.h src/GUI/page/codePage/codePageEditWidget.cpp src/GUI/page/codePage/codePageEditWidget.ui
     src/GUI/page/codePage/codeFileListWidget.h src/GUI/page/codePage/codeFileListWidget.cpp src/GUI/page/codePage/codeFileListWidget.ui
     src/GUI/page/codePage/codeTreeSideWidget.h src/GUI/page/codePage/codeTreeSideWidget.cpp src/GUI/page/codePage/codeTreeSideWidget.ui
+
     src/GUI/page/configPage/projectConfigSideMenu.h src/GUI/page/configPage/projectConfigSideMenu.cpp src/GUI/page/configPage/projectConfigSideMenu.ui
     src/GUI/page/configPage/projectConfigWidget.h src/GUI/page/configPage/projectConfigWidget.cpp src/GUI/page/configPage/projectConfigWidget.ui
     src/GUI/page/configPage/genBuildConfigWidget.h src/GUI/page/configPage/genBuildConfigWidget.cpp src/GUI/page/configPage/genBuildConfigWidget.ui
@@ -56,6 +57,7 @@ set(GUI_Code_Files
 set(Main_Code_Files
     src/project/projectManager.h src/project/projectManager.cpp
     src/project/project.h src/project/project.cpp
+    src/file/editCodeManager.cpp src/file/editCodeManager.h
 )
 
 set(PROJECT_SOURCES
@@ -71,8 +73,7 @@ set(PROJECT_SOURCES
         src/externProcesses/debuggerProcess.h src/externProcesses/debuggerProcess.cpp
         src/externProcesses/externProcessThread.h src/externProcesses/externProcessThread.cpp
         src/externProcesses/cmakeProcess.h src/externProcesses/cmakeProcess.cpp
-        ${THIRD_RESOURCES_FILE}
-        ${THIRD_SOURCE_FILES}
+        ${THIRD_CODE_FILES}
 
 )
 
@@ -82,12 +83,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         resource.qrc
         # src/model/historyProjectListModel.h src/model/historyProjectListModel.cpp
-        src/GUI/page/startPage/historyListWidget.h src/GUI/page/startPage/historyListWidget.cpp
-        src/GUI/page/startPage/historyItemForm.h src/GUI/page/startPage/historyItemForm.cpp src/GUI/page/startPage/historyItemForm.ui
         src/model/modelDataDef.h src/model/modelDataDef.cpp
-        src/GUI/page/codePage/codePage.h src/GUI/page/codePage/codePage.cpp
-        src/GUI/window/actionWindow/createFileDialog.h src/GUI/window/actionWindow/createFileDialog.cpp src/GUI/window/actionWindow/createFileDialog.ui
-        src/file/editCodeManager.cpp src/file/editCodeManager.h
+
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET C_Light_IDE APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

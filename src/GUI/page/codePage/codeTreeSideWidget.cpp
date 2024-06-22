@@ -43,6 +43,7 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
     connect(this->treeWidget, &QTreeWidget::itemDoubleClicked, this, &CodeTreeSideWidget::_on_itemDoubleCliced);
     connect(this->treeWidget, &QTreeWidget::itemPressed, this, &CodeTreeSideWidget::_on_itemPressed);
     connect(GlobalData::projectManager, &ProjectManager::projectAdded, this, &CodeTreeSideWidget::_on_ProjectAdded);
+    connect(GlobalData::projectManager, &ProjectManager::projectRemoved, this, &CodeTreeSideWidget::_on_ProjectRemoved);
 
     connect(fileMenu, &QMenu::triggered, this, &CodeTreeSideWidget::_on_fileMenuTriggered);
 
@@ -53,21 +54,22 @@ CodeTreeSideWidget::~CodeTreeSideWidget()
     delete ui;
 }
 
-void CodeTreeSideWidget::loadProjectFileTree(Project& project)
+void CodeTreeSideWidget::loadProjectFileTree(std::shared_ptr<Project> project)
 {
-    QTreeWidgetItem* rootItem = new QTreeWidgetItem();
+    CodeTreeWidgetItem* rootItem = new CodeTreeWidgetItem();
     this->treeWidget->addTopLevelItem(rootItem);
 
-    rootItem->setText(0,project.name);
+    rootItem->project = project;
+    rootItem->setText(0,project->name);
     rootItem->setIcon(0,QIcon(":/icons/resource/icons/file.png"));
-    rootItem->setToolTip(0, project.projectRootDir);
+    rootItem->setToolTip(0, project->projectRootDir);
     rootItem->setExpanded(true);
 
-    QDir dir(project.projectRootDir);
+    QDir dir(project->projectRootDir);
     loadChildFile(dir, rootItem);
 }
 
-void CodeTreeSideWidget::loadChildFile(QDir &parentDir, QTreeWidgetItem *parent)
+void CodeTreeSideWidget::loadChildFile(QDir &parentDir, CodeTreeWidgetItem *parent)
 {
 
     QApplication::processEvents(); //防止界面假死
@@ -83,7 +85,8 @@ void CodeTreeSideWidget::loadChildFile(QDir &parentDir, QTreeWidgetItem *parent)
             continue;
         }
         QFileInfo fileInfo(parentPath+"/"+fileNameStr);
-        QTreeWidgetItem *child = new QTreeWidgetItem(parent);
+        CodeTreeWidgetItem *child = new CodeTreeWidgetItem(parent);
+        child->project = parent->project;
         child->setText(0,fileNameStr);
         child->setToolTip(0,fileInfo.absoluteFilePath());
         if(fileInfo.isFile())
@@ -97,14 +100,14 @@ void CodeTreeSideWidget::loadChildFile(QDir &parentDir, QTreeWidgetItem *parent)
     }
 }
 
-void CodeTreeSideWidget::clearChildren(QTreeWidgetItem *parent)
+void CodeTreeSideWidget::clearChildren(CodeTreeWidgetItem *parent)
 {
     if(parent == nullptr) return;
 
     int count = parent->childCount();
     for(int i=count-1; i>=0; i--)
     {
-        QTreeWidgetItem *childItem = parent->child(i);
+        CodeTreeWidgetItem* childItem = dynamic_cast<CodeTreeWidgetItem*>(parent->child(i));
         parent->removeChild(childItem);
         SAFE_DELE_P(childItem);
     }
@@ -126,32 +129,15 @@ QString CodeTreeSideWidget::genFileSoleName(QDir &dir, QString name)
     return tempName;
 }
 
-QString CodeTreeSideWidget::genDirSoleName(QDir &dir, QString name)
-{
-    QString tempName = name;
-    QString path = dir.absolutePath() + '/' + name;
-    QString tempPath;
-    int count = 1;
-    while(dir.exists()){
-        if(count > 20){
-            tempName = "";
-            break;
-        }
-        dir.setPath(tempPath);
-        tempPath = path + (QString::number(count));
-        count++;
-    }
 
-    return tempName + QString::number(count);
-}
-
-QTreeWidgetItem *CodeTreeSideWidget::addChildFileItem(QString &path, QTreeWidgetItem *parent)
+CodeTreeWidgetItem *CodeTreeSideWidget::addChildFileItem(QString &path, CodeTreeWidgetItem *parent)
 {
     QFileInfo fileInfo(path);
     if(!fileInfo.exists() || parent == nullptr){
         return nullptr;
     }
-    QTreeWidgetItem *child = new QTreeWidgetItem(parent);
+    CodeTreeWidgetItem *child = new CodeTreeWidgetItem(parent);
+    child->project = parent->project;
     child->setText(0,fileInfo.fileName());
     child->setToolTip(0,fileInfo.absoluteFilePath());
     if(fileInfo.isFile())
@@ -165,7 +151,7 @@ QTreeWidgetItem *CodeTreeSideWidget::addChildFileItem(QString &path, QTreeWidget
     return child;
 }
 
-void CodeTreeSideWidget::startEditTreeItem(QTreeWidgetItem *item, int colum)
+void CodeTreeSideWidget::startEditTreeItem(CodeTreeWidgetItem *item, int colum)
 {
     if(!item) return;
     this->currentEditNameItem = item;
@@ -181,15 +167,16 @@ void CodeTreeSideWidget::_on_itemDoubleCliced(QTreeWidgetItem *item)
 {
 
     QString path = item->toolTip(0);
-
+    CodeTreeWidgetItem* item_p = dynamic_cast<CodeTreeWidgetItem*>(item);
     QFileInfo fileInfo(path);
     if(fileInfo.isDir()){ // 文件夹：加载子文件
-        clearChildren(item);
+        clearChildren(item_p);
         QDir dir(fileInfo.absoluteFilePath());
-        loadChildFile(dir, item);
+        loadChildFile(dir, item_p);
     }else if(fileInfo.isFile()){ // 文件：打开文件
-        QString name = item->text(0);
-        GlobalData::editCodeManager->addOpenedFile(path, name);
+        QString name = item_p->text(0);
+        FileStruct file(name,path,item_p->project);
+        GlobalData::editCodeManager->addOpenedFile(file);
     }
 }
 
@@ -243,19 +230,13 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
 {
     QString text = action->text();
     QTreeWidgetItem* item = this->treeWidget->currentItem();
+    CodeTreeWidgetItem* item_p = dynamic_cast<CodeTreeWidgetItem*>(item);
     QString filePath = item->toolTip(0);
 
     if(text == "关闭项目"){
-        QTreeWidgetItem* item = this->treeWidget->currentItem();
-        QString path = item->toolTip(0);
-        std::shared_ptr<Project> project = GlobalData::projectManager->findProject(path);
+        std::shared_ptr<Project> project = item_p->project;
         if(project){
             GlobalData::projectManager->removeProject(project);
-            int index = this->treeWidget->indexOfTopLevelItem(item);
-            if(index >= 0){
-                this->treeWidget->takeTopLevelItem(index);
-                SAFE_DELE_P(item);
-            }
         }
     }else if(text == "新文件"){
         // 设置新文件路径
@@ -294,7 +275,7 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
         }else{
             parent = item;
         }
-        QTreeWidgetItem* newChild = addChildFileItem(path, parent);
+        CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
         // 重命名
         this->startEditTreeItem(newChild, 0);
 
@@ -306,20 +287,21 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
         QString newName;
         if(fileInfo.isFile()){
             dir = fileInfo.absoluteDir();
-            newName = genDirSoleName(dir, this->defaultFileName);
+            newName = genFileSoleName(dir, this->defaultDirName);
         }else if(fileInfo.isDir()){
             dir.setPath(filePath);
-            newName = genDirSoleName(dir, this->defaultFileName);
+            newName = genFileSoleName(dir, this->defaultDirName);
         }
         if(newName.isEmpty()){
             QMessageBox::warning(this, "创建失败", "文件夹名生成失败！", QMessageBox::NoButton);
             return;
         }else{
             if(!dir.mkdir(newName)){
-                QMessageBox::warning(this, "创建失败", "无法创建该文件夹！", QMessageBox::NoButton);
+                QMessageBox::warning(this, "创建失败", "无法创建该文件夹！"+newName, QMessageBox::NoButton);
                 return;
             }
         }
+        path = dir.filePath(newName);
         //更新UI显示
         QTreeWidgetItem* parent = nullptr;
         if(fileInfo.isFile()){
@@ -327,31 +309,47 @@ void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
         }else{
             parent = item;
         }
-        QTreeWidgetItem* newChild = addChildFileItem(path, parent);
+        CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
         // 重命名
         this->startEditTreeItem(newChild, 0);
     }else if(text =="重命名"){
         //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-        this->startEditTreeItem(item, 0);
+        this->startEditTreeItem(item_p, 0);
 
     }else if(text =="删除文件"){
         if(QFile::remove(filePath)){
             QTreeWidgetItem* parent = item->parent();
             if(parent){
-                clearChildren(parent);
-                QDir dir(parent->toolTip(0));
-                this->loadChildFile(dir, parent);
+                CodeTreeWidgetItem* parent_p = dynamic_cast<CodeTreeWidgetItem*>(parent);
+                clearChildren(parent_p);
+                QDir dir(parent_p->toolTip(0));
+                this->loadChildFile(dir,parent_p);
             }
             GlobalData::editCodeManager->removeOpenedFile(filePath);
         }else{
             QMessageBox::critical(this, "删除失败", "无法删除该文件！\nfile: "+filePath, QMessageBox::NoButton);
         }
+    }else if(text =="删除文件夹"){
+
     }
 }
 
 void CodeTreeSideWidget::_on_ProjectAdded(std::shared_ptr<Project> project)
 {
-    this->loadProjectFileTree(*project);
+    this->loadProjectFileTree(project);
+}
+
+void CodeTreeSideWidget::_on_ProjectRemoved(std::shared_ptr<Project> project)
+{
+    int size = this->treeWidget->topLevelItemCount();
+    for(int i=0; i<size; i++){
+        CodeTreeWidgetItem* item_p = dynamic_cast<CodeTreeWidgetItem*>(this->treeWidget->topLevelItem(i));
+        if(item_p->project == project){
+            this->treeWidget->takeTopLevelItem(i);
+            SAFE_DELE_P(item_p);
+            break;
+        }
+    }
 }
 
 void CodeTreeSideWidget::_on_nameEditingFinished()
@@ -381,3 +379,9 @@ void CodeTreeSideWidget::_on_nameEditingFinished()
     treeWidget->removeItemWidget(currentEditNameItem, 0);
 }
 
+
+CodeTreeWidgetItem::CodeTreeWidgetItem(QTreeWidgetItem *parent)
+    : QTreeWidgetItem(parent)
+{
+
+}

@@ -4,19 +4,16 @@ EditCodeManager::EditCodeManager(QObject *parent)
     : QObject{parent}
 {}
 
-bool EditCodeManager::addOpenedFile(QString &path, QString& name)
+bool EditCodeManager::addOpenedFile(FileStruct& file)
 {
     bool flag = false;
-    if(openedfileMap.contains(path)){
-        emit fileOpened(openedfileMap[path]);
+    if(openedfileMap.contains(file.path)){
+        emit fileOpened(openedfileMap[file.path]);
         flag = true;
         return flag;
     }
-    FileStruct file;
-    file.path = path;
-    file.name = name;
     file.isChanged = false;
-    openedfileMap.insert(path, file);
+    openedfileMap.insert(file.path, file);
     flag = true;
     emit fileOpened(file);
 
@@ -72,6 +69,21 @@ bool EditCodeManager::setFileName(QString &path, QString &name)
     flag = true;
     emit fileNameChanged(openedfileMap[path]);
 
+    return flag;
+}
+
+bool EditCodeManager::saveFile(QString &path)
+{
+    bool flag = false;
+    if(!openedfileMap.contains(path)){
+        return flag;
+    }
+
+    FileStruct file =  openedfileMap[path];
+    if(file.isChanged){
+        flag = true;
+        emit fileSave(openedfileMap[path]);
+    }
     return flag;
 }
 

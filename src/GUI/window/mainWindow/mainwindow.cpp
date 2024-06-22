@@ -11,7 +11,7 @@
 
 #include "sideMenu/sideMenuWidget.h"
 #include "../../page/startPage/startPageWidget.h"
-#include "../../page/codePage/codePage.h""
+#include "../../page/codePage/codePage.h"
 #include "../../page/codePage/codePageEditWidget.h"
 #include "../../page/codePage/codeTreeSideWidget.h"
 #include "../../page/codePage/codeFileListWidget.h"

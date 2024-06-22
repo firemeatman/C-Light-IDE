@@ -10,6 +10,16 @@
 #include "../../../project/project.h"
 #include "../../window/actionWindow/createFileDialog.h"
 
+class CodeTreeWidgetItem : public QTreeWidgetItem
+{
+public:
+    explicit CodeTreeWidgetItem(QTreeWidgetItem *parent = nullptr);
+
+    std::shared_ptr<Project> project = nullptr;
+
+};
+
+
 namespace Ui {
 class CodeTreeSideWidget;
 }
@@ -30,24 +40,24 @@ public:
     explicit CodeTreeSideWidget(QWidget *parent = nullptr);
     ~CodeTreeSideWidget();
 
-    void loadProjectFileTree(Project& project);
+    void loadProjectFileTree(std::shared_ptr<Project> project);
 
 private:
 
-    QTreeWidgetItem* currentEditNameItem = nullptr;
+    CodeTreeWidgetItem* currentEditNameItem = nullptr;
 
-    void loadChildFile(QDir& parentDir, QTreeWidgetItem *parent);
-    void clearChildren(QTreeWidgetItem *parent);
+    void loadChildFile(QDir& parentDir, CodeTreeWidgetItem *parent);
+    void clearChildren(CodeTreeWidgetItem *parent);
     QString genFileSoleName(QDir& dir, QString name);
-    QString genDirSoleName(QDir& dir, QString name);
-    QTreeWidgetItem* addChildFileItem(QString& path, QTreeWidgetItem *parent);
-    void startEditTreeItem(QTreeWidgetItem *item, int colum);
+    CodeTreeWidgetItem* addChildFileItem(QString& path, CodeTreeWidgetItem *parent);
+    void startEditTreeItem(CodeTreeWidgetItem *item, int colum);
 
 public slots:
     void _on_itemDoubleCliced(QTreeWidgetItem *item);
     void _on_itemPressed(QTreeWidgetItem *item, int column);
     void _on_fileMenuTriggered(QAction *action);
     void _on_ProjectAdded(std::shared_ptr<Project> project);
+    void _on_ProjectRemoved(std::shared_ptr<Project> project);
     void _on_nameEditingFinished();
 
 private:
@@ -59,6 +69,7 @@ private:
     //QTreeWidgetItem* rootItem = nullptr;
 
     QString defaultFileName = "newFile";
+    QString defaultDirName = "newFloder";
 
 };
 

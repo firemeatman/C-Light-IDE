@@ -8,12 +8,19 @@
 
 #include "../../../file/editCodeManager.h"
 
-class QTreeWidgetItem;
+class CodeFileListWidgetItem : public QListWidgetItem
+{
+public:
+    explicit CodeFileListWidgetItem(QListWidget *parent = nullptr, int type = Type)
+        : QListWidgetItem(parent, type){};
+
+    std::shared_ptr<Project> project = nullptr;
+
+};
 
 namespace Ui {
 class CodeFileListWidget;
 }
-
 
 class CodeFileListWidget : public QWidget
 {
@@ -33,13 +40,17 @@ private:
 
     int countRepeatNameNum(QString& name);
     int fileItemIndex(QString& path);
-    void addFileItem(QString& name, QString& filePath);
+    void addFileItem(QString& name, QString& filePath, std::shared_ptr<Project> project);
     void removeFileItem(QString& filePath);
 
 public slots:
+    void _on_ProjectRemoved(std::shared_ptr<Project> project);
+
     void _on_fileisChangedChanged(FileStruct file);
     void _on_fileOpened(FileStruct file);
     void _on_fileNameChanged(FileStruct file);
+    void _on_fileClosed(FileStruct file);
+
     void _on_clickedItem(QListWidgetItem *item);
     void _on_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
     void _on_triggeredMenu(QAction* action);

@@ -29,6 +29,9 @@ CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
 
     // 文件右键菜单
     fileItemMenu = new QMenu(this);
+    fileItemMenu->addAction("保存");
+    fileItemMenu->addAction("保存所有");
+    fileItemMenu->addSeparator();
     fileItemMenu->addAction("关闭");
     fileItemMenu->addAction("关闭其他");
     fileItemMenu->addAction("关闭所有");
@@ -37,15 +40,22 @@ CodeFileListWidget::CodeFileListWidget(QWidget *parent) :
     connect(fileItemMenu, &QMenu::triggered, this, &CodeFileListWidget::_on_triggeredMenu);
     connect(listWidget, &QListWidget::currentItemChanged, this, &CodeFileListWidget::_on_currentItemChanged);
 
+    connect(GlobalData::projectManager, &ProjectManager::projectRemoved, this, &CodeFileListWidget::_on_ProjectRemoved);
     connect(GlobalData::editCodeManager, &EditCodeManager::fileisChangedChanged,this,&CodeFileListWidget::_on_fileisChangedChanged);
     connect(GlobalData::editCodeManager, &EditCodeManager::fileOpened,this,&CodeFileListWidget::_on_fileOpened);
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
     connect(GlobalData::editCodeManager, &EditCodeManager::fileNameChanged, this, &CodeFileListWidget::_on_fileNameChanged);
 
 }
 
 CodeFileListWidget::~CodeFileListWidget()
 {
-    listWidget->clear();
+    int num = listWidget->count();
+    for(int i=0; i<num ; i++){
+        CodeFileListWidgetItem* item = dynamic_cast<CodeFileListWidgetItem*>(listWidget->takeItem(i));
+        SAFE_DELE_P(item);
+    }
+
     delete ui;
 }
 
@@ -55,7 +65,7 @@ int CodeFileListWidget::countRepeatNameNum(QString &name)
     int count = 0;
     for(int i=0; i<num ; i++){
         QString text = listWidget->item(i)->text();
-        if(text.compare(name) == 0){
+        if(text == name){
             count++;
         }
     }
@@ -75,11 +85,15 @@ int CodeFileListWidget::fileItemIndex(QString &path)
     return index;
 }
 
-void CodeFileListWidget::addFileItem(QString &name, QString& filePath)
+void CodeFileListWidget::addFileItem(QString &name, QString& filePath, std::shared_ptr<Project> project)
 {
     int repeatNum = countRepeatNameNum(name);
-    QString itemName = name + "(" + QString::number(repeatNum) + ")";
-    QListWidgetItem* listItem = new QListWidgetItem();
+    QString itemName = name;
+    if(repeatNum > 0){
+        itemName = itemName + "(" + QString::number(repeatNum) + ")";
+    }
+    CodeFileListWidgetItem* listItem = new CodeFileListWidgetItem();
+    listItem->project = project;
     listItem->setText(itemName);
     listItem->setToolTip(filePath);
     listItem->setIcon(QIcon(":/icons/resource/icons/file.png"));
@@ -92,11 +106,29 @@ void CodeFileListWidget::removeFileItem(QString &filePath)
     for(int i=0; i<num ; i++){
         QString text = listWidget->item(i)->toolTip();
         if(text == filePath){
-            QListWidgetItem* listItem = listWidget->takeItem(i);
+            CodeFileListWidgetItem* listItem = static_cast<CodeFileListWidgetItem*>(listWidget->takeItem(i));
             SAFE_DELE_P(listItem);
             break;
         }
     }
+}
+
+void CodeFileListWidget::_on_ProjectRemoved(std::shared_ptr<Project> project)
+{
+    disconnect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
+    int num = listWidget->count();
+    QString path;
+    CodeFileListWidgetItem* item;
+    for(int i=num-1; i>=0 ; i--){
+        item = static_cast<CodeFileListWidgetItem*>(listWidget->item(i));
+        if(item->project == project){
+            path = item->toolTip();
+            GlobalData::editCodeManager->removeOpenedFile(path);
+            listWidget->takeItem(i);
+            SAFE_DELE_P(item);           
+        }
+    }
+    connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
 }
 
 void CodeFileListWidget::_on_fileisChangedChanged(FileStruct file)
@@ -117,7 +149,7 @@ void CodeFileListWidget::_on_fileOpened(FileStruct file)
     if(index >= 0){
         listWidget->setCurrentRow(index);
     }else{
-        addFileItem(file.name, file.path);
+        addFileItem(file.name, file.path, file.project);
     }
 }
 
@@ -130,6 +162,22 @@ void CodeFileListWidget::_on_fileNameChanged(FileStruct file)
             item->setText(file.name + "*");
         }else{
             item->setText(file.name);
+        }
+    }
+}
+
+void CodeFileListWidget::_on_fileClosed(FileStruct file)
+{
+    int num = listWidget->count();
+    QString path;
+    CodeFileListWidgetItem* listItem;
+    for(int i=num-1; i>=0 ; i--){
+        listItem = static_cast<CodeFileListWidgetItem*>(listWidget->item(i));
+        path = listItem->toolTip();
+        if(path == file.path){
+            listWidget->takeItem(i);
+            SAFE_DELE_P(listItem);
+            break;
         }
     }
 }
@@ -155,31 +203,52 @@ void CodeFileListWidget::_on_triggeredMenu(QAction *action)
 {
     QString text = action->text();
     QListWidgetItem* item = listWidget->currentItem();
-    if(text == "关闭"){
+
+    if(text == "保存"){
+        QString path = item->toolTip();
+        GlobalData::editCodeManager->saveFile(path);
+    }else if(text == "保存所有"){
+        int num = listWidget->count();
+        for(int i=0; i<num ; i++){
+            QString path = listWidget->item(i)->toolTip();
+            GlobalData::editCodeManager->saveFile(path);
+        }
+
+    }else if(text == "关闭"){
+        disconnect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
         QString path = item->toolTip();
         GlobalData::editCodeManager->removeOpenedFile(path);
-        QListWidgetItem* p = listWidget->takeItem(listWidget->currentRow());
+        CodeFileListWidgetItem* p = static_cast<CodeFileListWidgetItem*>(listWidget->takeItem(listWidget->currentRow()));
         SAFE_DELE_P(p);
+        connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
     }else if(text == "关闭其他"){
+        disconnect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
         int num = listWidget->count();
+        QString path;
+        CodeFileListWidgetItem* listItem;
         for(int i=num-1; i>=0 ; i--){
-            QListWidgetItem* listItem = listWidget->item(i);
+            listItem = static_cast<CodeFileListWidgetItem*>(listWidget->item(i));
             if(listItem != item){
-                QString path = listItem->toolTip();
+                path = listItem->toolTip();
                 GlobalData::editCodeManager->removeOpenedFile(path);
                 listWidget->takeItem(i);
                 SAFE_DELE_P(listItem);
             }
         }
+        connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
     }else if(text == "关闭所有"){
+        disconnect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
         int num = listWidget->count();
+        QString path;
+        CodeFileListWidgetItem* listItem;
         for(int i=num-1; i>=0 ; i--){
-            QListWidgetItem* listItem = listWidget->item(i);
-            QString path = listItem->toolTip();
+            listItem = static_cast<CodeFileListWidgetItem*>(listWidget->item(i));
+            path = listItem->toolTip();
             GlobalData::editCodeManager->removeOpenedFile(path);
             listWidget->takeItem(i);
             SAFE_DELE_P(listItem);
         }
+        connect(GlobalData::editCodeManager, &EditCodeManager::fileClosed,this,&CodeFileListWidget::_on_fileClosed);
     }
 
 }

@@ -16,7 +16,11 @@ public:
     QString path;
     bool isChanged;
 
-    //std::shared_ptr<Project*> bindingProject = nullptr;
+    std::shared_ptr<Project> project;
+
+    FileStruct(QString& name, QString& path, std::shared_ptr<Project> project)
+        :name(name),path(path),isChanged(false),project(project){};
+    FileStruct():isChanged(false),project(nullptr){};
 };
 
 class EditCodeManager : public QObject
@@ -26,11 +30,12 @@ public:
     explicit EditCodeManager(QObject *parent = nullptr);
     QMap<QString, FileStruct> openedfileMap;
 
-    bool addOpenedFile(QString& path, QString& name);
+    bool addOpenedFile(FileStruct& file);
     bool removeOpenedFile(QString& path);
     bool editFile(QString& path);
     bool setFileChanged(QString& path, bool isChanged);
     bool setFileName(QString& path, QString& name);
+    bool saveFile(QString& path);
 
 signals:
     void fileisChangedChanged(FileStruct file);
@@ -38,6 +43,7 @@ signals:
     void fileEditing(FileStruct file);
     void fileOpened(FileStruct file);
     void fileClosed(FileStruct file);
+    void fileSave(FileStruct file);
 public slots:
     void _on_projectRemoved(std::shared_ptr<Project> project);
 };

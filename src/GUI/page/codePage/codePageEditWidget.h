@@ -5,6 +5,7 @@
 #include <QPlainTextEdit>
 #include <QStackedWidget>
 #include <QMap>
+#include "../../../third/CodeEditor/codeEditor/codeEditor.h"
 #include "../../../file/editCodeManager.h"
 namespace Ui {
 class CodePageEditWidget;
@@ -18,13 +19,14 @@ public:
     explicit CodePageEditWidget(QWidget *parent = nullptr);
     ~CodePageEditWidget();
 
-    QMap<QString, QPlainTextEdit*> codeEditorMap;
+    QMap<QString, CodeEditor*> codeEditorMap;
     QStackedWidget* stackedWidget;
     QString currentEdittingFile;
 
     void loadEditor(QString& filePath);
     void removeEdior(QString& filePath);
-    void updateEditor(QString& filePath);
+    void updateEditorData(QString& filePath);
+    void saveEditorData(QString& filePath);
 
 
 protected:
@@ -38,6 +40,7 @@ public slots:
     void _on_fileEditing(FileStruct file);
     void _on_fileOpened(FileStruct file);
     void _on_fileClosed(FileStruct file);
+    void _on_fileSave(FileStruct file);
 
 
 };
