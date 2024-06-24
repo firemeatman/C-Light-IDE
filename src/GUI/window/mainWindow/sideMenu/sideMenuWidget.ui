@@ -208,7 +208,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>设置</string>
+            <string>配置</string>
            </property>
            <property name="icon">
             <iconset resource="../../../../../resource.qrc">

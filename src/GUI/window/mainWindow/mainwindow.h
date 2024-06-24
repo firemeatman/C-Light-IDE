@@ -13,13 +13,9 @@ class CodePageEditWidget;
 class CodeTreeSideWidget;
 class CodeFileListWidget;
 
-class ProjectConfigSideMenu;
-class ProjectConfigWidget;
-class GenBuildConfigWidget;
-class debugConfigWidget;
-
 class MakeInfoWidget;
 class CodePage;
+class ConfigerPage;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,7 +26,10 @@ enum class WindowPageRoute{
     CodePage,
     ConfigPage,
 };
-
+enum class MainWindowDock{
+    BuildDock,
+    WrongDock,
+};
 
 class MainWindow : public QMainWindow
 
@@ -42,6 +41,7 @@ public:
     ~MainWindow();
 
     bool jump(WindowPageRoute route, QVariantMap& param);
+    bool switchDockWidget(MainWindowDock dock, bool enable);
 
 private:
     Ui::MainWindow *ui;
@@ -51,6 +51,7 @@ public:
     QStackedWidget* stackWidget = nullptr;
 
     CodePage* codePage = nullptr;
+    ConfigerPage* configerPage = nullptr;
     StartPageWidget* startPageWidget = nullptr;
 
     QDockWidget* makeOutdockWidget = nullptr;

@@ -12,13 +12,7 @@
 #include "sideMenu/sideMenuWidget.h"
 #include "../../page/startPage/startPageWidget.h"
 #include "../../page/codePage/codePage.h"
-#include "../../page/codePage/codePageEditWidget.h"
-#include "../../page/codePage/codeTreeSideWidget.h"
-#include "../../page/codePage/codeFileListWidget.h"
-#include "../../page/configPage/projectConfigSideMenu.h"
-#include "../../page/configPage/projectConfigWidget.h"
-#include "../../page/configPage/genBuildConfigWidget.h"
-#include "../../page/configPage/debugConfigWidget.h"
+#include "../../page/configPage/configerPage.h"
 #include "../infoWindow/makeInfoWidget.h"
 
 
@@ -46,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     makeOutdockWidget->setWidget(makeInfoWidget);
     makeOutdockWidget->setFeatures(QDockWidget::DockWidgetClosable);
     makeOutdockWidget->hide();
-    this->addDockWidget(Qt::BottomDockWidgetArea, makeOutdockWidget);
     //makeOutdockWidget->setTitleBarWidget(new QWidget(makeOutdockWidget));
 
     // 设置状态栏
@@ -69,25 +62,13 @@ MainWindow::MainWindow(QWidget *parent)
     // ---开始页面
     startPageWidget = new StartPageWidget(this);
     stackWidget->addWidget(startPageWidget); // 0
-    // ---代码窗口
+    // ---代码页面
     codePage = new CodePage(this);
     stackWidget->addWidget(codePage); // 1
 
-    // ---配置窗口
-    // projectConfigSideMenu = new ProjectConfigSideMenu(this);
-    // projectConfigWidget = new ProjectConfigWidget(this);
-    // genBuildConfigWidget = new GenBuildConfigWidget(this);
-    // _debugConfigWidget = new debugConfigWidget(this);
-    // projectConfigSideMenuDockWidget = new QDockWidget(this);
-    // projectConfigWidget->hide();
-    // genBuildConfigWidget->hide();
-    // _debugConfigWidget->hide();
-    // projectConfigSideMenuDockWidget->setWidget(projectConfigSideMenu);
-    // projectConfigSideMenuDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    // projectConfigSideMenuDockWidget->hide();
-    // page_p = new Page(WindowPageRoute::ConfigPage, codePageEditWidget);
-    // page_p->addDock(projectConfigSideMenuDockWidget, false);
-    // this->pageList.append(page_p);
+    // ---配置页面
+    this->configerPage = new ConfigerPage(this);
+    stackWidget->addWidget(configerPage); // 2
 
 
     //===============================信号===========================================
@@ -133,6 +114,7 @@ bool MainWindow::jump(WindowPageRoute route, QVariantMap &param)
     }
     case WindowPageRoute::ConfigPage:
     {
+        this->stackWidget->setCurrentWidget(this->configerPage);
         break;
     }
     default:
@@ -145,6 +127,35 @@ bool MainWindow::jump(WindowPageRoute route, QVariantMap &param)
     }
     return flag;
 
+}
+
+bool MainWindow::switchDockWidget(MainWindowDock dock, bool enable)
+{
+    bool flag = true;
+
+    switch (dock) {
+    case MainWindowDock::BuildDock:
+    {
+        if(enable){
+            this->addDockWidget(Qt::BottomDockWidgetArea, makeOutdockWidget);
+            makeOutdockWidget->show();
+        }else{
+            this->removeDockWidget(this->makeOutdockWidget);
+        }
+
+        break;
+    }
+    case MainWindowDock::WrongDock:
+    {
+
+        break;
+    }
+    default:
+        flag = false;
+        break;
+    }
+
+    return flag;
 }
 
 void MainWindow::_on_clicked_programOutBtn()

@@ -26,26 +26,38 @@ CodeTreeSideWidget::CodeTreeSideWidget(QWidget *parent) :
 
     // 菜单设置
     fileMenu = new QMenu(this);
-    fileMenu->addAction("关闭项目"); // 0
-    fileMenu->addAction("新文件"); // 1
-    addfileMenu = new QMenu("创建更多文件",this);
+    this->closeProjectAction = new QAction(tr("关闭项目"), this);
+    this->newFileAction = new QAction(tr("新文件"), this);
+    this->newFloderAction = new QAction(tr("创建文件夹"), this);
+    this->renameAction = new QAction(tr("重命名"), this);
+    this->deleFileAction = new QAction(tr("删除文件"), this);
+    this->deleFloderAction = new QAction(tr("删除文件夹"), this);
+
+    fileMenu->addAction(closeProjectAction); // 0
+    fileMenu->addAction(newFileAction); // 1
+    addfileMenu = new QMenu(tr("创建更多文件"),this);
     addfileMenu->addAction("空白文件");
     addfileMenu->addAction(".h文件");
     addfileMenu->addAction(".c文件");
     addfileMenu->addAction(".cpp文件");
     addfileMenu->addAction("c++类");
     fileMenu->addMenu(addfileMenu);
-    fileMenu->addAction("创建文件夹");
-    fileMenu->addAction("重命名");
-    fileMenu->addAction("删除文件");
-    fileMenu->addAction("删除文件夹");
+    fileMenu->addAction(newFloderAction);
+    fileMenu->addAction(renameAction);
+    fileMenu->addAction(deleFileAction);
+    fileMenu->addAction(deleFloderAction);
 
     connect(this->treeWidget, &QTreeWidget::itemDoubleClicked, this, &CodeTreeSideWidget::_on_itemDoubleCliced);
     connect(this->treeWidget, &QTreeWidget::itemPressed, this, &CodeTreeSideWidget::_on_itemPressed);
     connect(GlobalData::projectManager, &ProjectManager::projectAdded, this, &CodeTreeSideWidget::_on_ProjectAdded);
     connect(GlobalData::projectManager, &ProjectManager::projectRemoved, this, &CodeTreeSideWidget::_on_ProjectRemoved);
 
-    connect(fileMenu, &QMenu::triggered, this, &CodeTreeSideWidget::_on_fileMenuTriggered);
+    connect(closeProjectAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_closeProjectActionTriggered);
+    connect(newFileAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_newFileActionTriggered);
+    connect(newFloderAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_newFloderActionTriggered);
+    connect(renameAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_renameActionTriggered);
+    connect(deleFileAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_deleFileActionTriggered);
+    connect(deleFloderAction, &QAction::triggered, this, &CodeTreeSideWidget::_on_deleFloderActionTriggered);
 
 }
 
@@ -203,134 +215,177 @@ void CodeTreeSideWidget::_on_itemPressed(QTreeWidgetItem *item, int column)
         action->setVisible(true);
     }
     for(auto action: actionList){
-        if(action->text() == "关闭项目"){
+        if(action == this->closeProjectAction){
             if(!(type & SelectItemType::ProjectRoot)){
                 action->setVisible(false);
             }
-        }else if(action->text() == "重命名"){
+        }else if(action == this->renameAction){
             if(type & SelectItemType::ProjectRoot || type & SelectItemType::Dir){
                 action->setVisible(false);
             }
-        }else if(action->text() == "删除文件"){
+        }else if(action == this->deleFileAction){
             if(type & SelectItemType::ProjectRoot || type & SelectItemType::Dir){
                 action->setVisible(false);
             }
-        }else if(action->text() == "删除文件夹"){
+        }else if(action == this->deleFileAction){
             if(type & SelectItemType::ProjectRoot || type & SelectItemType::File){
                 action->setVisible(false);
             }
         }
     }
 
-
     fileMenu->exec(QCursor::pos());
 }
 
-void CodeTreeSideWidget::_on_fileMenuTriggered(QAction *action)
+
+void CodeTreeSideWidget::_on_closeProjectActionTriggered(bool isChecked)
 {
-    QString text = action->text();
     QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
     CodeTreeWidgetItem* item_p = dynamic_cast<CodeTreeWidgetItem*>(item);
+
+    std::shared_ptr<Project> project = item_p->project;
+    if(project){
+        GlobalData::projectManager->removeProject(project);
+    }
+}
+
+void CodeTreeSideWidget::_on_newFileActionTriggered(bool isChecked)
+{
+    QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
     QString filePath = item->toolTip(0);
 
-    if(text == "关闭项目"){
-        std::shared_ptr<Project> project = item_p->project;
-        if(project){
-            GlobalData::projectManager->removeProject(project);
-        }
-    }else if(text == "新文件"){
-        // 设置新文件路径
-        QFileInfo fileInfo(filePath);
-        QString path;
-        if(fileInfo.isFile()){
-            QDir dir = fileInfo.absoluteDir();
-            QString newName = genFileSoleName(dir, this->defaultFileName);
-            if(newName.isEmpty()){
-                QMessageBox::warning(this, "创建失败", "文件名生成失败！", QMessageBox::NoButton);
-                return;
-            }else{
-                path = dir.filePath(this->defaultFileName);
-            }
-
-        }else if(fileInfo.isDir()){
-            QDir dir(filePath);
-            QString newName = genFileSoleName(dir, this->defaultFileName);
-            if(newName.isEmpty()){
-                QMessageBox::warning(this, "创建失败", "文件名生成失败！", QMessageBox::NoButton);
-                return;
-            }else{
-                path = filePath + "/" + newName;
-            }
-        }
-        // 创建文件，更新UI显示
-        QFile file(path);
-        if (!file.open(QIODevice::WriteOnly)){
-            QMessageBox::warning(this, "创建失败", "无法创建该文件！", QMessageBox::NoButton);
-            return;
-        }
-        file.close();
-        QTreeWidgetItem* parent = nullptr;
-        if(fileInfo.isFile()){
-            parent = item->parent();
-        }else{
-            parent = item;
-        }
-        CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
-        // 重命名
-        this->startEditTreeItem(newChild, 0);
-
-    }else if(text =="创建文件夹"){
-        // 创建文件夹
-        QFileInfo fileInfo(filePath);
-        QString path;
-        QDir dir;
-        QString newName;
-        if(fileInfo.isFile()){
-            dir = fileInfo.absoluteDir();
-            newName = genFileSoleName(dir, this->defaultDirName);
-        }else if(fileInfo.isDir()){
-            dir.setPath(filePath);
-            newName = genFileSoleName(dir, this->defaultDirName);
-        }
+    // 设置新文件路径
+    QFileInfo fileInfo(filePath);
+    QString path;
+    if(fileInfo.isFile()){
+        QDir dir = fileInfo.absoluteDir();
+        QString newName = genFileSoleName(dir, this->defaultFileName);
         if(newName.isEmpty()){
-            QMessageBox::warning(this, "创建失败", "文件夹名生成失败！", QMessageBox::NoButton);
+            QMessageBox::warning(this, "创建失败", "文件名生成失败！", QMessageBox::NoButton);
             return;
         }else{
-            if(!dir.mkdir(newName)){
-                QMessageBox::warning(this, "创建失败", "无法创建该文件夹！"+newName, QMessageBox::NoButton);
-                return;
-            }
+            path = dir.filePath(this->defaultFileName);
         }
-        path = dir.filePath(newName);
-        //更新UI显示
-        QTreeWidgetItem* parent = nullptr;
-        if(fileInfo.isFile()){
-            parent = item->parent();
-        }else{
-            parent = item;
-        }
-        CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
-        // 重命名
-        this->startEditTreeItem(newChild, 0);
-    }else if(text =="重命名"){
-        //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-        this->startEditTreeItem(item_p, 0);
 
-    }else if(text =="删除文件"){
-        if(QFile::remove(filePath)){
-            QTreeWidgetItem* parent = item->parent();
-            if(parent){
-                CodeTreeWidgetItem* parent_p = dynamic_cast<CodeTreeWidgetItem*>(parent);
-                clearChildren(parent_p);
-                QDir dir(parent_p->toolTip(0));
-                this->loadChildFile(dir,parent_p);
-            }
-            GlobalData::editCodeManager->removeOpenedFile(filePath);
+    }else if(fileInfo.isDir()){
+        QDir dir(filePath);
+        QString newName = genFileSoleName(dir, this->defaultFileName);
+        if(newName.isEmpty()){
+            QMessageBox::warning(this, "创建失败", "文件名生成失败！", QMessageBox::NoButton);
+            return;
         }else{
-            QMessageBox::critical(this, "删除失败", "无法删除该文件！\nfile: "+filePath, QMessageBox::NoButton);
+            path = filePath + "/" + newName;
         }
-    }else if(text =="删除文件夹"){
+    }
+    // 创建文件，更新UI显示
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly)){
+        QMessageBox::warning(this, "创建失败", "无法创建该文件！", QMessageBox::NoButton);
+        return;
+    }
+    file.close();
+    QTreeWidgetItem* parent = nullptr;
+    if(fileInfo.isFile()){
+        parent = item->parent();
+    }else{
+        parent = item;
+    }
+    CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
+    // 重命名
+    this->startEditTreeItem(newChild, 0);
 
+}
+
+void CodeTreeSideWidget::_on_newFloderActionTriggered(bool isChecked)
+{
+    QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
+    QString filePath = item->toolTip(0);
+
+    // 创建文件夹
+    QFileInfo fileInfo(filePath);
+    QString path;
+    QDir dir;
+    QString newName;
+    if(fileInfo.isFile()){
+        dir = fileInfo.absoluteDir();
+        newName = genFileSoleName(dir, this->defaultDirName);
+    }else if(fileInfo.isDir()){
+        dir.setPath(filePath);
+        newName = genFileSoleName(dir, this->defaultDirName);
+    }
+    if(newName.isEmpty()){
+        QMessageBox::warning(this, "创建失败", "文件夹名生成失败！", QMessageBox::NoButton);
+        return;
+    }else{
+        if(!dir.mkdir(newName)){
+            QMessageBox::warning(this, "创建失败", "无法创建该文件夹！"+newName, QMessageBox::NoButton);
+            return;
+        }
+    }
+    path = dir.filePath(newName);
+    //更新UI显示
+    QTreeWidgetItem* parent = nullptr;
+    if(fileInfo.isFile()){
+        parent = item->parent();
+    }else{
+        parent = item;
+    }
+    CodeTreeWidgetItem* newChild = addChildFileItem(path, dynamic_cast<CodeTreeWidgetItem*>(parent));
+    // 重命名
+    this->startEditTreeItem(newChild, 0);
+}
+
+void CodeTreeSideWidget::_on_renameActionTriggered(bool isChecked)
+{
+    QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
+    CodeTreeWidgetItem* item_p = dynamic_cast<CodeTreeWidgetItem*>(item);
+
+    //item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
+    this->startEditTreeItem(item_p, 0);
+}
+
+void CodeTreeSideWidget::_on_deleFileActionTriggered(bool isChecked)
+{
+    QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
+    QString filePath = item->toolTip(0);
+
+    if(QFile::remove(filePath)){
+        QTreeWidgetItem* parent = item->parent();
+        if(parent){
+            CodeTreeWidgetItem* parent_p = dynamic_cast<CodeTreeWidgetItem*>(parent);
+            clearChildren(parent_p);
+            QDir dir(parent_p->toolTip(0));
+            this->loadChildFile(dir,parent_p);
+        }
+        GlobalData::editCodeManager->removeOpenedFile(filePath);
+    }else{
+        QMessageBox::critical(this, "删除失败", "无法删除该文件！\nfile: "+filePath, QMessageBox::NoButton);
+    }
+}
+
+void CodeTreeSideWidget::_on_deleFloderActionTriggered(bool isChecked)
+{
+    QTreeWidgetItem* item = this->treeWidget->currentItem();
+    if(!item) return;
+    QString filePath = item->toolTip(0);
+
+    QDir dir(filePath);
+    if(dir.isEmpty()){
+        dir.removeRecursively();
+        QTreeWidgetItem* parent = item->parent();
+        if(parent){
+            CodeTreeWidgetItem* parent_p = dynamic_cast<CodeTreeWidgetItem*>(parent);
+            clearChildren(parent_p);
+            QDir dir(parent_p->toolTip(0));
+            this->loadChildFile(dir,parent_p);
+        }
+    }else{
+        QMessageBox::critical(this, "删除失败", "该文件夹不为空！\nfile: "+filePath, QMessageBox::NoButton);
     }
 }
 

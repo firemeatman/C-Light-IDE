@@ -47,11 +47,6 @@ set(GUI_Code_Files
     src/GUI/page/codePage/codeFileListWidget.h src/GUI/page/codePage/codeFileListWidget.cpp src/GUI/page/codePage/codeFileListWidget.ui
     src/GUI/page/codePage/codeTreeSideWidget.h src/GUI/page/codePage/codeTreeSideWidget.cpp src/GUI/page/codePage/codeTreeSideWidget.ui
 
-    src/GUI/page/configPage/projectConfigSideMenu.h src/GUI/page/configPage/projectConfigSideMenu.cpp src/GUI/page/configPage/projectConfigSideMenu.ui
-    src/GUI/page/configPage/projectConfigWidget.h src/GUI/page/configPage/projectConfigWidget.cpp src/GUI/page/configPage/projectConfigWidget.ui
-    src/GUI/page/configPage/genBuildConfigWidget.h src/GUI/page/configPage/genBuildConfigWidget.cpp src/GUI/page/configPage/genBuildConfigWidget.ui
-    src/GUI/page/configPage/debugConfigWidget.h src/GUI/page/configPage/debugConfigWidget.cpp src/GUI/page/configPage/debugConfigWidget.ui
-
 )
 
 set(Main_Code_Files
@@ -84,6 +79,8 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resource.qrc
         # src/model/historyProjectListModel.h src/model/historyProjectListModel.cpp
         src/model/modelDataDef.h src/model/modelDataDef.cpp
+        src/GUI/page/configPage/configerPage.h src/GUI/page/configPage/configerPage.cpp
+        src/GUI/page/configPage/buildConfigerForm.h src/GUI/page/configPage/buildConfigerForm.cpp src/GUI/page/configPage/buildConfigerForm.ui
 
     )
 # Define target properties for Android with Qt 6 as:

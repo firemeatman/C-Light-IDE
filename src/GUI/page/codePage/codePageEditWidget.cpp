@@ -104,8 +104,12 @@ void CodePageEditWidget::saveEditorData(QString &filePath)
 
 void CodePageEditWidget::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key() == Qt::Key_S && event->modifiers() == Qt::CTRL){
+    int keys = event->key();
+    Qt::KeyboardModifiers modifiers = event->modifiers();
+    if(keys == Qt::Key_S && modifiers == Qt::CTRL){
         GlobalData::editCodeManager->saveFile(this->currentEdittingFile);
+    }else if(keys == Qt::Key_D && modifiers == Qt::CTRL){
+
     }
 }
 

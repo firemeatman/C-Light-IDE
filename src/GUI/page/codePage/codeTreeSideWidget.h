@@ -55,18 +55,32 @@ private:
 public slots:
     void _on_itemDoubleCliced(QTreeWidgetItem *item);
     void _on_itemPressed(QTreeWidgetItem *item, int column);
-    void _on_fileMenuTriggered(QAction *action);
+
+    void _on_closeProjectActionTriggered(bool isChecked);
+    void _on_newFileActionTriggered(bool isChecked);
+    void _on_newFloderActionTriggered(bool isChecked);
+    void _on_renameActionTriggered(bool isChecked);
+    void _on_deleFileActionTriggered(bool isChecked);
+    void _on_deleFloderActionTriggered(bool isChecked);
+
     void _on_ProjectAdded(std::shared_ptr<Project> project);
     void _on_ProjectRemoved(std::shared_ptr<Project> project);
     void _on_nameEditingFinished();
 
 private:
     Ui::CodeTreeSideWidget *ui;
+
     QTreeWidget* treeWidget = nullptr;
     QMenu* fileMenu;
     QMenu* addfileMenu;
+    QAction* closeProjectAction;
+    QAction* newFileAction;
+    QAction* newFloderAction;
+    QAction* renameAction;
+    QAction* deleFileAction;
+    QAction* deleFloderAction;
+
     CreateFileDialog* createFileDialog = nullptr;
-    //QTreeWidgetItem* rootItem = nullptr;
 
     QString defaultFileName = "newFile";
     QString defaultDirName = "newFloder";
